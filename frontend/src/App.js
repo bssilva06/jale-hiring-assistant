@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import JobPosting from './pages/JobPosting';
 import CandidatePortal from './pages/CandidatePortal';
 import InterviewRoom from './pages/InterviewRoom';
+import InterviewsPage from './pages/InterviewsPage';
 
 // Components
 import CandidateList from './components/hiring/CandidateList';
@@ -49,7 +50,7 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/jobs/new" element={<JobPosting />} />
                   <Route path="/candidates" element={<div><h1 className="text-3xl font-bold mb-6">All Candidates</h1><CandidateList /></div>} />
-                  <Route path="/interviews" element={<div><h1 className="text-3xl font-bold mb-6">Interviews</h1><p className="text-gray-600">Interview list coming soon...</p></div>} />
+                  <Route path="/interviews" element={<InterviewsPage />} />
                   <Route path="/interviews/schedule/:applicationId" element={<InterviewScheduler />} />
                   <Route path="/interviews/room/:interviewId" element={<InterviewRoom />} />
                   

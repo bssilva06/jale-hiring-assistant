@@ -15,86 +15,90 @@ const Navbar = ({ onMenuClick }) => {
   const isCandidate = location.pathname.startsWith('/apply');
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-40">
+    <nav className="bg-white shadow-lg sticky top-0 z-40 border-b-4 border-primary">
       <div className="container-custom">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-18 py-3">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Briefcase className="text-primary" size={32} />
-            <span className="text-2xl font-bold text-gray-900">
+          <Link to="/" className="flex items-center space-x-3 group">
+            <img 
+              src="/jale-app-logo.png" 
+              alt="Jale Logo" 
+              className="h-10 w-auto group-hover:scale-110 transition-transform"
+            />
+            <span className="text-3xl font-extrabold text-gray-900">
               Jale <span className="text-primary">AI</span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-2">
             {isHiringManager ? (
               <>
                 <Link 
                   to="/dashboard" 
-                  className={`font-medium transition-colors ${
+                  className={`font-bold px-4 py-2 rounded-lg transition-all ${
                     location.pathname === '/dashboard' 
-                      ? 'text-primary' 
-                      : 'text-gray-600 hover:text-primary'
+                      ? 'bg-primary text-white' 
+                      : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
                   Dashboard
                 </Link>
                 <Link 
                   to="/jobs/new" 
-                  className={`font-medium transition-colors ${
+                  className={`font-bold px-4 py-2 rounded-lg transition-all ${
                     location.pathname === '/jobs/new' 
-                      ? 'text-primary' 
-                      : 'text-gray-600 hover:text-primary'
+                      ? 'bg-primary text-white' 
+                      : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
                   Post Job
                 </Link>
                 <Link 
                   to="/candidates" 
-                  className={`font-medium transition-colors ${
+                  className={`font-bold px-4 py-2 rounded-lg transition-all ${
                     location.pathname === '/candidates' 
-                      ? 'text-primary' 
-                      : 'text-gray-600 hover:text-primary'
+                      ? 'bg-primary text-white' 
+                      : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
                   Candidates
                 </Link>
                 <Link 
                   to="/interviews" 
-                  className={`font-medium transition-colors ${
+                  className={`font-bold px-4 py-2 rounded-lg transition-all ${
                     location.pathname === '/interviews' 
-                      ? 'text-primary' 
-                      : 'text-gray-600 hover:text-primary'
+                      ? 'bg-primary text-white' 
+                      : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
                   Interviews
                 </Link>
                 <button
                   onClick={() => navigate('/')}
-                  className="text-gray-600 hover:text-primary font-medium transition-colors"
+                  className="text-gray-700 hover:text-primary font-bold transition-colors ml-2"
                   title="Back to Home"
                 >
-                  <Home size={20} />
+                  <Home size={24} />
                 </button>
               </>
             ) : isCandidate ? (
               <>
                 <Link 
                   to="/apply" 
-                  className={`font-medium transition-colors ${
+                  className={`font-bold px-4 py-2 rounded-lg transition-all ${
                     location.pathname.startsWith('/apply')
-                      ? 'text-primary' 
-                      : 'text-gray-600 hover:text-primary'
+                      ? 'bg-primary text-white' 
+                      : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
                   Browse Jobs
                 </Link>
                 <button
                   onClick={() => navigate('/')}
-                  className="text-gray-600 hover:text-primary font-medium transition-colors flex items-center space-x-1"
+                  className="text-gray-700 hover:text-primary font-bold transition-colors flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-blue-50"
                 >
-                  <Home size={18} />
+                  <Home size={20} />
                   <span>Back to Home</span>
                 </button>
               </>
@@ -105,9 +109,9 @@ const Navbar = ({ onMenuClick }) => {
           {isHiringManager && (
             <button 
               onClick={onMenuClick}
-              className="md:hidden text-gray-600 hover:text-primary"
+              className="md:hidden text-gray-700 hover:text-primary p-2"
             >
-              <Menu size={24} />
+              <Menu size={28} />
             </button>
           )}
           
@@ -115,9 +119,9 @@ const Navbar = ({ onMenuClick }) => {
           {isCandidate && (
             <button
               onClick={() => navigate('/')}
-              className="md:hidden text-gray-600 hover:text-primary"
+              className="md:hidden text-gray-700 hover:text-primary p-2"
             >
-              <Home size={24} />
+              <Home size={28} />
             </button>
           )}
         </div>
