@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🚀 Jale AI Hiring Assistant
+# Jale AI Hiring Assistant
 
-### _Revolutionizing Blue-Collar Recruitment with AI_
+### Revolutionizing Blue-Collar Recruitment with AI
 
 [![React](https://img.shields.io/badge/React-19.2.0-61dafb?style=for-the-badge&logo=react&logoColor=white)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
@@ -11,31 +11,31 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-[Features](#-features) • [Demo](#-demo) • [Tech Stack](#-tech-stack) • [Quick Start](#-quick-start) • [Architecture](#-architecture) • [Contributing](#-contributing)
+[Features](#features) • [Demo](#demo) • [Tech Stack](#tech-stack) • [Quick Start](#quick-start) • [Architecture](#architecture) • [Contributing](#contributing)
 
 ---
 
 </div>
 
-## 📖 About
+## About
 
 **Jale AI Hiring Assistant** is an intelligent recruitment platform designed specifically for blue-collar industries. Built for [Work4Workers](https://work4workers.com), it bridges the gap between employers and skilled workers through AI-powered matching, bilingual support, and automated workflows.
 
-> 💡 **Winner of [Hackathon Name]** - Built in 48 hours to solve real-world hiring challenges in the construction and trades industries.
+Built in 48 hours to solve real-world hiring challenges in the construction and trades industries.
 
-## ✨ Features
+## Features
 
 <table>
 <tr>
 <td width="50%">
 
-### 🤖 **AI-Powered Matching**
+### AI-Powered Matching
 
 - Intelligent candidate-job matching using vector embeddings
 - Claude AI analyzes skills, experience, and requirements
 - Real-time match scores (0-100%) with detailed breakdowns
 
-### 💬 **Bilingual Chatbot**
+### Bilingual Chatbot
 
 - English & Spanish support for inclusive hiring
 - Context-aware conversations about job opportunities
@@ -44,13 +44,13 @@
 </td>
 <td width="50%">
 
-### 📅 **Smart Scheduling**
+### Smart Scheduling
 
 - Automated interview coordination
 - Calendar integrations and reminders
 - SMS/Email notifications via n8n workflows
 
-### 🎥 **Video Interviews**
+### Video Interviews
 
 - Built-in Jitsi Meet integration
 - No downloads required - browser-based
@@ -60,36 +60,36 @@
 </tr>
 </table>
 
-### 🌟 Additional Features
+### Additional Features
 
-- 📊 **Real-time Dashboard** - Track applications, interviews, and hiring metrics
-- 🔍 **Advanced Filtering** - Sort candidates by match score, status, and skills
-- 📱 **Mobile Responsive** - Works seamlessly on all devices
-- 🎨 **Custom Branding** - Tailored to Work4Workers' design system
-- 🔐 **Secure Data** - Supabase PostgreSQL with row-level security
-- ⚡ **Fast Performance** - Optimized React components and lazy loading
+- **Real-time Dashboard** - Track applications, interviews, and hiring metrics
+- **Advanced Filtering** - Sort candidates by match score, status, and skills
+- **Mobile Responsive** - Works seamlessly on all devices
+- **Custom Branding** - Tailored to Work4Workers' design system
+- **Secure Data** - Supabase PostgreSQL with row-level security
+- **Fast Performance** - Optimized React components and lazy loading
 
 ---
 
-## 🎬 Demo
+## Demo
 
 <!-- Replace with actual screenshots when ready -->
 
 <div align="center">
 
-### 🏠 Landing Page
+### Landing Page
 
 _Role selection for employers and workers_
 
 ![Landing Page](https://via.placeholder.com/800x400/1B56FD/FFFFFF?text=Landing+Page+Screenshot)
 
-### 💼 Employer Dashboard
+### Employer Dashboard
 
 _Manage jobs, candidates, and interviews_
 
 ![Dashboard](https://via.placeholder.com/800x400/0118D8/FFFFFF?text=Dashboard+Screenshot)
 
-### 👷 Candidate Portal
+### Candidate Portal
 
 _Browse jobs and apply with AI assistance_
 
@@ -99,7 +99,7 @@ _Browse jobs and apply with AI assistance_
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 <div align="center">
 
@@ -117,7 +117,7 @@ _Browse jobs and apply with AI assistance_
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -126,14 +126,14 @@ _Browse jobs and apply with AI assistance_
 - Anthropic API key ([Get here](https://console.anthropic.com))
 - n8n installed globally or via npx
 
-### 1️⃣ Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/bssilva06/jale-hiring-assistant.git
 cd jale-hiring-assistant
 ```
 
-### 2️⃣ Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 # Install frontend dependencies
@@ -145,7 +145,7 @@ cd ../backend
 npm install
 ```
 
-### 3️⃣ Environment Setup
+### 3. Environment Setup
 
 **Frontend** (`frontend/.env.local`):
 
@@ -165,9 +165,9 @@ CLAUDE_API_KEY=your_claude_api_key
 N8N_WEBHOOK_URL=your_n8n_webhook_url
 ```
 
-> 📝 See `.env.example` files for full configuration options
+**Note:** See `.env.example` files for full configuration options
 
-### 4️⃣ Run the Application
+### 4. Run the Application
 
 **Terminal 1 - Frontend:**
 
@@ -192,15 +192,15 @@ npx n8n
 # Opens at http://localhost:5678
 ```
 
-### 5️⃣ Access the App
+### 5. Access the App
 
-- 🌐 **Frontend**: [http://localhost:3000](http://localhost:3000)
-- 🔧 **Backend API**: [http://localhost:5000](http://localhost:5000)
-- ⚙️ **n8n Dashboard**: [http://localhost:5678](http://localhost:5678)
+- **Frontend**: [http://localhost:3000](http://localhost:3000)
+- **Backend API**: [http://localhost:5000](http://localhost:5000)
+- **n8n Dashboard**: [http://localhost:5678](http://localhost:5678)
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 <div align="center">
 
@@ -263,26 +263,26 @@ graph TB
 
 </div>
 
-### 📂 Project Structure
+### Project Structure
 
 ```
 jale-hiring-assistant/
-├── 📁 frontend/              # React application
+├── frontend/              # React application
 │   ├── src/
 │   │   ├── components/      # Reusable UI components
 │   │   ├── pages/           # Route pages
 │   │   ├── services/        # API & Supabase clients
 │   │   └── utils/           # Helper functions
 │   └── public/              # Static assets
-├── 📁 backend/               # Node.js API server
+├── backend/               # Node.js API server
 │   └── src/
 │       ├── controllers/     # Route handlers
 │       ├── services/        # Business logic
 │       ├── middleware/      # Auth & error handling
 │       └── routes/          # API endpoints
-├── 📁 n8n-workflows/         # Automation workflows
+├── n8n-workflows/         # Automation workflows
 │   └── exports/             # Workflow JSON exports
-└── 📁 docs/                  # Documentation
+└── docs/                  # Documentation
     ├── API.md               # API documentation
     ├── ARCHITECTURE.md      # System design
     ├── SETUP.md            # Detailed setup guide
@@ -291,18 +291,18 @@ jale-hiring-assistant/
 
 ---
 
-## 📚 Documentation
+## Documentation
 
-| Document                                | Description                             |
-| --------------------------------------- | --------------------------------------- |
-| [📖 Setup Guide](docs/SETUP.md)         | Detailed installation and configuration |
-| [🔌 API Documentation](docs/API.md)     | Complete API reference                  |
-| [🏛️ Architecture](docs/ARCHITECTURE.md) | System design and data flow             |
-| [🎭 Demo Script](docs/DEMO_SCRIPT.md)   | Hackathon presentation guide            |
+| Document                             | Description                             |
+| ------------------------------------ | --------------------------------------- |
+| [Setup Guide](docs/SETUP.md)         | Detailed installation and configuration |
+| [API Documentation](docs/API.md)     | Complete API reference                  |
+| [Architecture](docs/ARCHITECTURE.md) | System design and data flow             |
+| [Demo Script](docs/DEMO_SCRIPT.md)   | Hackathon presentation guide            |
 
 ---
 
-## 🎨 Design System
+## Design System
 
 Built with Work4Workers' brand identity:
 
@@ -314,34 +314,32 @@ Built with Work4Workers' brand identity:
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions! Here's how you can help:
+We welcome contributions. Here's how you can help:
 
-1. 🍴 Fork the repository
-2. 🌿 Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. 💻 Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. 📤 Push to the branch (`git push origin feature/AmazingFeature`)
-5. 🔀 Open a Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👥 Team
+## Team
 
-Built with ❤️ by:
-
-- **Your Name** - Frontend Development
-- **Partner Name** - Backend Development
+- **Benjamin Silva** - Frontend Development
+- **Jacob Luna** - Backend Development
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Work4Workers](https://work4workers.com) for the inspiration
 - [Anthropic](https://www.anthropic.com) for Claude AI
@@ -352,9 +350,7 @@ Built with ❤️ by:
 
 <div align="center">
 
-### ⭐ Star this repo if you find it helpful!
-
-**Made with 💙 for blue-collar workers**
+**Made for blue-collar workers**
 
 [Report Bug](https://github.com/bssilva06/jale-hiring-assistant/issues) • [Request Feature](https://github.com/bssilva06/jale-hiring-assistant/issues)
 
