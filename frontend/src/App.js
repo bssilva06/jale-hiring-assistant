@@ -48,7 +48,11 @@ function App() {
               <main className="flex-1 p-6 md:p-8">
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/jobs" element={<JobPosting />} />
                   <Route path="/jobs/new" element={<JobPosting />} />
+                  <Route path="/jobs/:jobId" element={<JobPosting />} />
+                  <Route path="/applications" element={<div><h1 className="text-3xl font-bold mb-6">All Applications</h1><CandidateList /></div>} />
+                  <Route path="/applications/:applicationId" element={<div><h1 className="text-3xl font-bold mb-6">Application Details</h1><CandidateList /></div>} />
                   <Route path="/candidates" element={<div><h1 className="text-3xl font-bold mb-6">All Candidates</h1><CandidateList /></div>} />
                   <Route path="/interviews" element={<InterviewsPage />} />
                   <Route path="/interviews/schedule/:applicationId" element={<InterviewScheduler />} />
