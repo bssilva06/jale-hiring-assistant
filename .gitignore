@@ -36,12 +36,3 @@ logs/
 # Testing
 coverage/
 .nyc_output/
-
-# Helper/Guide Markdown Files (not needed in repo)
-QUICK_START.md
-FRONTEND_COMPLETE.md
-FRONTEND_README.md
-DESIGN_CUSTOMIZATION_GUIDE.md
-COMPONENT_SHOWCASE.md
-BRAND_UPDATE_SUMMARY.md
-ARCHITECTURE_DIAGRAM.md
