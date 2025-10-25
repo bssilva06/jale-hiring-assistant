@@ -1,0 +1,14 @@
+{
+  "name": "jale-hiring-assistant",
+  "version": "1.0.0",
+  "description": "AI-powered hiring assistant for Jale",
+  "private": true,
+  "scripts": {
+    "frontend": "cd frontend && npm start",
+    "backend": "cd backend && npm run dev",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+  },
+  "keywords": ["ai", "hiring", "automation"],
+  "author": "",
+  "license": "MIT"
+}
