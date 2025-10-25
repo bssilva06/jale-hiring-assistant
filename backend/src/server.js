@@ -21,6 +21,7 @@ app.get("/health", (req, res) => {
 // API Routes
 app.use("/api/jobs", require("./routes/jobs"));
 app.use("/api/candidates", require("./routes/candidates"));
+app.use("/api/applications", require("./routes/applications"));
 app.use("/api/interviews", require("./routes/interviews"));
 app.use("/api/chat", require("./routes/chat"));
 
@@ -33,7 +34,8 @@ app.listen(PORT, () => {
   console.log(`📋 Health check: http://localhost:${PORT}/health`);
   console.log(`💼 Jobs API: http://localhost:${PORT}/api/jobs`);
   console.log(`👤 Candidates API: http://localhost:${PORT}/api/candidates`);
-  console.log(`📅 Interviews API: http://localhost:${PORT}/api/interviews`);
+  console.log(`� Applications API: http://localhost:${PORT}/api/applications`);
+  console.log(`�📅 Interviews API: http://localhost:${PORT}/api/interviews`);
   console.log(`💬 Chat API: http://localhost:${PORT}/api/chat`);
 
   // Initialize scheduled tasks

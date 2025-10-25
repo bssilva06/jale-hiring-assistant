@@ -12,6 +12,7 @@ import Sidebar from "./components/layout/Sidebar";
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import JobPosting from "./pages/JobPosting";
+import ActiveJobs from "./pages/ActiveJobs";
 import CandidatePortal from "./pages/CandidatePortal";
 import InterviewRoom from "./pages/InterviewRoom";
 import InterviewsPage from "./pages/InterviewsPage";
@@ -38,6 +39,30 @@ function App() {
               <main className="p-6 md:p-8">
                 <Routes>
                   <Route path="/" element={<CandidatePortal />} />
+                  <Route 
+                    path="/success" 
+                    element={
+                      <div className="max-w-2xl mx-auto text-center py-20">
+                        <div className="bg-white rounded-lg shadow-md p-12">
+                          <div className="text-green-500 mb-6">
+                            <svg className="w-24 h-24 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <h1 className="text-3xl font-bold text-gray-800 mb-4">Application Submitted!</h1>
+                          <p className="text-lg text-gray-600 mb-8">
+                            Thank you for your application. We will review your profile and get back to you soon.
+                          </p>
+                          <button
+                            onClick={() => window.location.href = '/apply'}
+                            className="bg-primary text-white px-8 py-3 rounded-lg hover:bg-primary-dark transition-colors"
+                          >
+                            View More Jobs
+                          </button>
+                        </div>
+                      </div>
+                    } 
+                  />
                   <Route path="/:jobId" element={<CandidatePortal />} />
                 </Routes>
               </main>
@@ -61,7 +86,7 @@ function App() {
                 <main className="flex-1 p-6 md:p-8">
                   <Routes>
                     <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/jobs" element={<JobPosting />} />
+                    <Route path="/jobs" element={<ActiveJobs />} />
                     <Route path="/jobs/new" element={<JobPosting />} />
                     <Route path="/jobs/:jobId" element={<JobPosting />} />
                     <Route

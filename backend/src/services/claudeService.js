@@ -47,6 +47,12 @@ const getMatchScore = async (candidateProfile, jobRequirements) => {
 };
 
 const getChatResponse = async (userMessage, jobDetails, history) => {
+  // Comprehensive Spanish detection on current message
+  const spanishCharacters = /[áéíóúñ¿¡]/i.test(userMessage);
+  const spanishWords = /\b(hola|qué|que|cuál|cual|dónde|donde|cómo|como|cuánto|cuanto|gracias|por favor|bueno|locacion|posicion|trabajo|salario|horario|requisitos|aplicar|necesito|tengo|español|es|el|la|los|las|un|una|pago|está|esta)\b/i.test(userMessage);
+  
+  const isSpanish = spanishCharacters || spanishWords;
+
   const systemPrompt = `
     You are an AI hiring assistant for Jale, a company that connects workers with jobs. 
     You help candidates by answering questions about job postings in a friendly, professional manner.
@@ -58,9 +64,14 @@ const getChatResponse = async (userMessage, jobDetails, history) => {
     - Schedule: ${jobDetails.schedule}
     - Requirements: ${JSON.stringify(jobDetails.requirements)}
 
+    IMPORTANT LANGUAGE INSTRUCTION:
+    ${isSpanish 
+      ? '- You MUST respond COMPLETELY in Spanish\n    - DO NOT use any English words\n    - Keep all responses in Spanish only'
+      : '- You MUST respond COMPLETELY in English\n    - DO NOT use any Spanish words\n    - Keep all responses in English only'
+    }
+
     Guidelines:
-    - Be concise and friendly
-    - Answer in the same language the candidate uses (English or Spanish)
+    - Be concise and friendly (2-3 sentences max)
     - Only answer questions about: pay, location, schedule, requirements, application process
     - If asked about something else, politely redirect to submitting an application
  `;
@@ -73,12 +84,12 @@ const getChatResponse = async (userMessage, jobDetails, history) => {
   try {
     const msg = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
-      max_tokens: 500,
-      temperature: 0.5,
+      max_tokens: 300,
+      temperature: 0.2, // Very low temperature for consistent language
       system: systemPrompt,
       messages: [
-        ...formattedHistory, // Spread the previous messages
-        { role: "user", content: userMessage }, // Add the new user message
+        ...formattedHistory,
+        { role: "user", content: userMessage },
       ],
     });
 

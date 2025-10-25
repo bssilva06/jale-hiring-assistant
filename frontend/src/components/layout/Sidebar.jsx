@@ -14,7 +14,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const menuItems = [
     { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/jobs/new', icon: Briefcase, label: 'Post Job' },
+    { path: '/jobs', icon: Briefcase, label: 'Active Jobs' },
     { path: '/candidates', icon: Users, label: 'Candidates' },
     { path: '/interviews', icon: Calendar, label: 'Interviews' },
     { path: '/applications', icon: FileText, label: 'Applications' },

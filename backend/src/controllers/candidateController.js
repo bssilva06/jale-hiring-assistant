@@ -15,10 +15,39 @@ const createCandidateApplication = async (req, res) => {
   } = req.body;
 
   try {
-    const { data: candidate, error: candidateError } = await supabase
+    // First check if candidate exists
+    const { data: existingCandidate } = await supabase
       .from("candidates")
-      .upsert(
-        {
+      .select("*")
+      .eq("email", email)
+      .maybeSingle();
+
+    let candidate;
+    if (existingCandidate) {
+      // Update existing candidate
+      const { data, error: updateError } = await supabase
+        .from("candidates")
+        .update({
+          name,
+          phone,
+          skills,
+          experience_years,
+          certifications,
+          language_preference,
+        })
+        .eq("email", email)
+        .select()
+        .single();
+      
+      if (updateError) {
+        throw new Error(`Candidate update failed: ${updateError.message}`);
+      }
+      candidate = data;
+    } else {
+      // Create new candidate
+      const { data, error: insertError } = await supabase
+        .from("candidates")
+        .insert([{
           name,
           email,
           phone,
@@ -26,20 +55,47 @@ const createCandidateApplication = async (req, res) => {
           experience_years,
           certifications,
           language_preference,
-        },
-        { onConflict: "email" }
-      )
-      .select()
+        }])
+        .select()
+        .single();
+      
+      if (insertError) {
+        throw new Error(`Candidate creation failed: ${insertError.message}`);
+      }
+      candidate = data;
+    }
+
+    // Fetch job details for match score calculation
+    const { data: job, error: jobError } = await supabase
+      .from("jobs")
+      .select("*")
+      .eq("id", job_id)
       .single();
 
-    if (candidateError) {
-      throw new Error(`Candidate creation failed: ${candidateError.message}`);
+    if (jobError) {
+      throw new Error(`Job not found: ${jobError.message}`);
+    }
+
+    // Calculate match score using Claude AI
+    let matchScore = 0;
+    try {
+      const matchResult = await getMatchScore(candidate, job);
+      matchScore = matchResult.match_score || 0;
+      console.log(`Match score calculated: ${matchScore}% for candidate ${candidate.email}`);
+    } catch (scoreError) {
+      console.error("Error calculating match score:", scoreError.message);
+      // Continue with 0 score if calculation fails
     }
 
     const { data: application, error: appError } = await supabase
       .from("applications")
       .insert([
-        { job_id: job_id, candidate_id: candidate.id, status: "submitted" },
+        { 
+          job_id: job_id, 
+          candidate_id: candidate.id, 
+          status: "submitted",
+          match_score: matchScore 
+        },
       ])
       .select()
       .single();

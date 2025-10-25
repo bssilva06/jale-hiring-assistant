@@ -39,8 +39,7 @@ const CandidatePortal = () => {
       setJobs(response.data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
-      // Use mock data for demo
-      setJobs(mockJobs);
+      setJobs([]);
     } finally {
       setLoading(false);
     }
@@ -159,105 +158,14 @@ const CandidatePortal = () => {
           <ApplicationForm jobId={jobId || (selectedJob && selectedJob.id)} />
         )}
 
-        {/* ChatBot */}
-        <ChatBot jobId={jobId} />
+        {/* ChatBot - only show when a job is selected */}
+        {(jobId || selectedJob) && (
+          <ChatBot jobId={jobId || (selectedJob && selectedJob.id)} />
+        )}
       </div>
     </div>
   );
 };
 
-// Mock jobs data for demo
-const mockJobs = [
-  {
-    id: 1,
-    title: 'Construction Foreman',
-    pay: 32,
-    location: 'Austin, TX',
-    schedule: 'Full-time, Mon-Fri',
-    description: 'Seeking experienced construction foreman to lead commercial building projects. Must have strong leadership skills and 5+ years of construction experience.',
-    requirements: [
-      '5+ years of construction experience',
-      'OSHA safety certification',
-      'Team leadership experience',
-      'Blueprint reading skills',
-      'Valid driver\'s license'
-    ]
-  },
-  {
-    id: 2,
-    title: 'Electrician - Commercial',
-    pay: 28,
-    location: 'San Antonio, TX',
-    schedule: 'Full-time, Mon-Fri',
-    description: 'Licensed electrician needed for commercial electrical installations and maintenance. Work on office buildings, retail spaces, and industrial facilities.',
-    requirements: [
-      'Licensed Master or Journeyman Electrician',
-      'Commercial wiring experience',
-      'Code compliance knowledge',
-      'Troubleshooting skills',
-      'Own basic hand tools'
-    ]
-  },
-  {
-    id: 3,
-    title: 'Plumber',
-    pay: 26,
-    location: 'Houston, TX',
-    schedule: 'Full-time, Mon-Sat',
-    description: 'Residential and commercial plumber needed. Install, repair, and maintain plumbing systems. Service calls and new construction work.',
-    requirements: [
-      'Plumbing license or apprentice certificate',
-      '3+ years experience',
-      'Pipe installation and repair',
-      'Water heater experience',
-      'Customer service skills'
-    ]
-  },
-  {
-    id: 4,
-    title: 'Carpenter - Residential',
-    pay: 24,
-    location: 'Dallas, TX',
-    schedule: 'Full-time, Mon-Fri',
-    description: 'Skilled carpenter for custom home building. Framing, finish work, cabinetry, and trim installation. High-end residential projects.',
-    requirements: [
-      'Carpentry experience (framing & finish)',
-      'Blueprint reading',
-      'Own tools',
-      'Attention to detail',
-      'Reliable transportation'
-    ]
-  },
-  {
-    id: 5,
-    title: 'HVAC Technician',
-    pay: 30,
-    location: 'Fort Worth, TX',
-    schedule: 'Full-time, Mon-Fri + On-call',
-    description: 'Install, maintain, and repair HVAC systems in commercial buildings. Diagnose issues and perform preventive maintenance.',
-    requirements: [
-      'EPA certification (Universal preferred)',
-      'HVAC installation & repair experience',
-      'Electrical troubleshooting',
-      'Customer service',
-      'Clean driving record'
-    ]
-  },
-  {
-    id: 6,
-    title: 'Welder - Industrial',
-    pay: 27,
-    location: 'Corpus Christi, TX',
-    schedule: 'Full-time, Rotating shifts',
-    description: 'Industrial welder for manufacturing facility. MIG, TIG, and Stick welding on steel structures and equipment.',
-    requirements: [
-      'Welding certification',
-      'Blueprint reading',
-      '2+ years industrial welding',
-      'Safety conscious',
-      'Pass weld test'
-    ]
-  },
-];
 
 export default CandidatePortal;

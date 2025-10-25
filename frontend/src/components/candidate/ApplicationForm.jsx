@@ -54,7 +54,7 @@ const ApplicationForm = ({ jobId }) => {
 
       console.log('Application submitted:', response.data);
       
-      alert('Application submitted successfully! We will review your profile and get back to you soon.');
+      // Navigate to success page
       navigate('/apply/success');
     } catch (error) {
       console.error('Error submitting application:', error);

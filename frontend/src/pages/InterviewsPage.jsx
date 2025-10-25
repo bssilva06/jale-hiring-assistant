@@ -22,8 +22,7 @@ const InterviewsPage = () => {
       setInterviews(response.data);
     } catch (error) {
       console.error('Error fetching interviews:', error);
-      // Use mock data for demo
-      setInterviews(mockInterviews);
+      setInterviews([]);
     } finally {
       setLoading(false);
     }
@@ -278,56 +277,5 @@ const InterviewCard = ({ interview, navigate }) => {
   );
 };
 
-// Mock data for demo
-const mockInterviews = [
-  {
-    id: 1,
-    candidate_name: 'Carlos Rodriguez',
-    candidate_email: 'carlos.r@email.com',
-    candidate_phone: '(512) 555-0123',
-    job_title: 'Construction Foreman',
-    job_location: 'Austin, TX',
-    scheduled_time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
-    duration_minutes: 30,
-    match_score: 92,
-    status: 'scheduled'
-  },
-  {
-    id: 2,
-    candidate_name: 'Maria Garcia',
-    candidate_email: 'maria.garcia@email.com',
-    candidate_phone: '(512) 555-0456',
-    job_title: 'Electrician',
-    job_location: 'San Antonio, TX',
-    scheduled_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
-    duration_minutes: 45,
-    match_score: 85,
-    status: 'scheduled'
-  },
-  {
-    id: 3,
-    candidate_name: 'Juan Hernandez',
-    candidate_email: 'juan.h@email.com',
-    candidate_phone: '(512) 555-0789',
-    job_title: 'Plumber',
-    job_location: 'Houston, TX',
-    scheduled_time: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-    duration_minutes: 30,
-    match_score: 78,
-    status: 'completed'
-  },
-  {
-    id: 4,
-    candidate_name: 'Ana Martinez',
-    candidate_email: 'ana.martinez@email.com',
-    candidate_phone: '(512) 555-0321',
-    job_title: 'Carpenter',
-    job_location: 'Dallas, TX',
-    scheduled_time: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
-    duration_minutes: 60,
-    match_score: 88,
-    status: 'scheduled'
-  },
-];
 
 export default InterviewsPage;

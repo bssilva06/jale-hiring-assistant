@@ -12,10 +12,6 @@ const CandidateList = ({ jobId = null }) => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
-    fetchApplications();
-  }, [jobId]);
-
   const fetchApplications = async () => {
     try {
       const response = jobId 
@@ -24,12 +20,16 @@ const CandidateList = ({ jobId = null }) => {
       setApplications(response.data);
     } catch (error) {
       console.error('Error fetching applications:', error);
-      // Use mock data for demo
-      setApplications(mockApplications);
+      setApplications([]);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchApplications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobId]);
 
   const filteredApplications = applications.filter(app => {
     if (filter === 'all') return true;
@@ -241,129 +241,5 @@ const CandidateList = ({ jobId = null }) => {
     </div>
   );
 };
-
-// Mock data for demo
-const mockApplications = [
-  {
-    id: 1,
-    match_score: 92,
-    status: 'under_review',
-    candidate: {
-      name: 'Carlos Rodriguez',
-      email: 'carlos.r@email.com',
-      phone: '(512) 555-0123',
-      skills: ['Welding', 'Blueprint Reading', 'Safety Certification', 'Concrete Work'],
-    },
-    job: {
-      title: 'Construction Foreman',
-    },
-    strengths: ['10+ years experience in commercial construction', 'OSHA certified'],
-  },
-  {
-    id: 2,
-    match_score: 88,
-    status: 'interviewing',
-    candidate: {
-      name: 'Maria Garcia',
-      email: 'maria.g@email.com',
-      phone: '(512) 555-0456',
-      skills: ['Electrical Wiring', 'Code Compliance', 'Troubleshooting', 'Industrial Systems'],
-    },
-    job: {
-      title: 'Electrician - Commercial',
-    },
-    strengths: ['Licensed Master Electrician', 'Bilingual (EN/ES)'],
-  },
-  {
-    id: 3,
-    match_score: 85,
-    status: 'under_review',
-    candidate: {
-      name: 'Juan Hernandez',
-      email: 'juan.h@email.com',
-      phone: '(512) 555-0789',
-      skills: ['Plumbing', 'Pipefitting', 'Gas Lines', 'Water Heaters'],
-    },
-    job: {
-      title: 'Plumber',
-    },
-    strengths: ['EPA 608 certified', '8 years residential & commercial experience'],
-  },
-  {
-    id: 4,
-    match_score: 78,
-    status: 'applied',
-    candidate: {
-      name: 'Ana Martinez',
-      email: 'ana.m@email.com',
-      phone: '(512) 555-0321',
-      skills: ['Carpentry', 'Framing', 'Finish Work', 'Blueprint Reading'],
-    },
-    job: {
-      title: 'Carpenter - Residential',
-    },
-    strengths: ['Custom home building specialist', 'Detail-oriented finish work'],
-  },
-  {
-    id: 5,
-    match_score: 82,
-    status: 'under_review',
-    candidate: {
-      name: 'Miguel Santos',
-      email: 'miguel.s@email.com',
-      phone: '(512) 555-0654',
-      skills: ['HVAC Installation', 'Refrigeration', 'Ductwork', 'System Diagnostics'],
-    },
-    job: {
-      title: 'HVAC Technician',
-    },
-    strengths: ['EPA Universal certification', 'Commercial HVAC experience'],
-  },
-  {
-    id: 6,
-    match_score: 72,
-    status: 'applied',
-    candidate: {
-      name: 'Luis Ramirez',
-      email: 'luis.r@email.com',
-      phone: '(512) 555-0987',
-      skills: ['Painting', 'Surface Prep', 'Spray Systems', 'Color Matching'],
-    },
-    job: {
-      title: 'Painter',
-    },
-    strengths: ['Commercial & industrial painting', 'High-volume experience'],
-  },
-  {
-    id: 7,
-    match_score: 90,
-    status: 'interviewing',
-    candidate: {
-      name: 'Sofia Lopez',
-      email: 'sofia.l@email.com',
-      phone: '(512) 555-0246',
-      skills: ['Project Management', 'Team Leadership', 'Budgeting', 'Safety Management'],
-    },
-    job: {
-      title: 'Construction Foreman',
-    },
-    strengths: ['Led teams of 20+ workers', 'Strong safety record'],
-  },
-  {
-    id: 8,
-    match_score: 68,
-    status: 'applied',
-    candidate: {
-      name: 'Diego Flores',
-      email: 'diego.f@email.com',
-      phone: '(512) 555-0135',
-      skills: ['Roofing', 'Waterproofing', 'Shingle Installation', 'Flat Roofs'],
-    },
-    job: {
-      title: 'Roofer',
-    },
-    strengths: ['5 years roofing experience', 'Storm damage specialist'],
-  },
-];
 
 export default CandidateList;

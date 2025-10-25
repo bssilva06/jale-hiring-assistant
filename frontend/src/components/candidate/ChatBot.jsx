@@ -9,7 +9,7 @@ const ChatBot = ({ jobId, applicationId }) => {
     {
       id: 1,
       sender: 'ai',
-      content: '¡Hola! Hi! I\'m here to answer your questions about this job. You can ask me in English or Spanish! 🤖',
+      content: 'Hi! I\'m here to answer your questions about this job. Feel free to ask in English or Spanish! 🤖',
       timestamp: new Date(),
     }
   ]);
@@ -28,6 +28,12 @@ const ChatBot = ({ jobId, applicationId }) => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim() || loading) return;
+
+    // Don't send if no jobId
+    if (!jobId) {
+      console.error('ChatBot: No jobId provided');
+      return;
+    }
 
     const userMessage = {
       id: messages.length + 1,

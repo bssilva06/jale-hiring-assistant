@@ -64,6 +64,7 @@ const sendMessage = async (req, res) => {
     }
 
     res.status(200).json({
+      response: aiResponse,
       message: aiResponse,
       job_title: job.title,
     });

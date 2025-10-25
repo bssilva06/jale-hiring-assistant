@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { jobsAPI, applicationsAPI, interviewsAPI } from '../services/api';
+import { jobsAPI, interviewsAPI } from '../services/api';
 import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
 import CandidateList from '../components/hiring/CandidateList';
@@ -31,34 +31,42 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [jobsRes, applicationsRes, interviewsRes] = await Promise.all([
-        jobsAPI.getAll(),
-        applicationsAPI.getAll(),
-        interviewsAPI.getAll(),
-      ]);
+      // Fetch jobs (interviews might fail if table doesn't exist yet)
+      const jobsRes = await jobsAPI.getAll();
+      const jobs = jobsRes.data || [];
 
-      const jobs = jobsRes.data;
-      const applications = applicationsRes.data;
-      const interviews = interviewsRes.data;
+      let interviews = [];
+      try {
+        const interviewsRes = await interviewsAPI.getAll();
+        interviews = interviewsRes.data || [];
+      } catch (interviewError) {
+        console.warn('Interviews table not ready yet:', interviewError.message);
+      }
+
+      console.log('Dashboard API Response:', {
+        jobs,
+        interviews
+      });
 
       setStats({
         totalJobs: jobs.length,
-        totalApplications: applications.length,
+        totalApplications: 0, // TODO: Add applications endpoint
         interviewsScheduled: interviews.filter(i => i.status === 'scheduled').length,
-        hired: applications.filter(a => a.status === 'hired').length,
+        hired: 0, // TODO: Calculate from applications when endpoint is ready
       });
 
       setRecentJobs(jobs.slice(0, 5));
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      // Use mock data for demo
+      console.error('Error details:', error.response || error.message);
+      // Set empty state on error
       setStats({
-        totalJobs: 5,
-        totalApplications: 12,
-        interviewsScheduled: 4,
-        hired: 2,
+        totalJobs: 0,
+        totalApplications: 0,
+        interviewsScheduled: 0,
+        hired: 0,
       });
-      setRecentJobs(mockJobs);
+      setRecentJobs([]);
     } finally {
       setLoading(false);
     }
@@ -228,49 +236,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
-// Mock data for demo
-const mockJobs = [
-  {
-    id: 1,
-    title: 'Construction Foreman',
-    pay: 32,
-    location: 'Austin, TX',
-    application_count: 8,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    title: 'Electrician - Commercial',
-    pay: 28,
-    location: 'San Antonio, TX',
-    application_count: 5,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 3,
-    title: 'Plumber',
-    pay: 26,
-    location: 'Houston, TX',
-    application_count: 12,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 4,
-    title: 'Carpenter - Residential',
-    pay: 24,
-    location: 'Dallas, TX',
-    application_count: 6,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 5,
-    title: 'HVAC Technician',
-    pay: 30,
-    location: 'Fort Worth, TX',
-    application_count: 4,
-    created_at: new Date().toISOString(),
-  },
-];
 
 export default Dashboard;
