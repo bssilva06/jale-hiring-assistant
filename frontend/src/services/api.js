@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5001";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 // Create axios instance
 const api = axios.create({
@@ -48,7 +48,8 @@ export const jobsAPI = {
   getById: (id) => api.get(`/jobs/${id}`),
   create: (data) => api.post("/jobs", data),
   update: (id, data) => api.put(`/jobs/${id}`, data),
-  delete: (id) => api.delete(`/jobs/${id}`),
+  delete: (id) => api.delete(`/jobs/${id}`), // Soft delete (close)
+  permanentDelete: (id) => api.delete(`/jobs/${id}?permanent=true`), // Hard delete with query param
 };
 
 export const candidatesAPI = {

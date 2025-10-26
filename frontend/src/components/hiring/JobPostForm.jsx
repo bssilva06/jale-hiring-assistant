@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { jobsAPI } from '../../services/api';
 import Button from '../shared/Button';
 import { Briefcase, DollarSign, MapPin, Clock, FileText } from 'lucide-react';
 
 const JobPostForm = () => {
   const navigate = useNavigate();
+  const { jobId } = useParams();
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -16,6 +18,39 @@ const JobPostForm = () => {
     requirements: '',
     language: 'en',
   });
+
+  useEffect(() => {
+    if (jobId) {
+      setIsEditing(true);
+      fetchJobDetails();
+    }
+  }, [jobId]);
+
+  const fetchJobDetails = async () => {
+    try {
+      const response = await jobsAPI.getById(jobId);
+      const job = response.data;
+      
+      // Convert requirements array back to newline-separated string
+      const requirementsText = Array.isArray(job.requirements)
+        ? job.requirements.join('\n')
+        : job.requirements || '';
+      
+      setFormData({
+        title: job.title || '',
+        description: job.description || '',
+        pay: job.pay || '',
+        location: job.location || '',
+        schedule: job.schedule || '',
+        requirements: requirementsText,
+        language: job.language || 'en',
+      });
+    } catch (error) {
+      console.error('Error fetching job:', error);
+      alert('Failed to load job details.');
+      navigate('/jobs');
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,17 +74,23 @@ const JobPostForm = () => {
         requirements,
       };
 
-      const response = await jobsAPI.create(jobData);
-      console.log('Job created:', response.data);
-      
-      // Show success message
-      alert('Job posted successfully! Automated outreach will begin shortly.');
+      if (isEditing) {
+        // Update existing job
+        const response = await jobsAPI.update(jobId, jobData);
+        console.log('Job updated:', response.data);
+        alert('Job updated successfully!');
+      } else {
+        // Create new job
+        const response = await jobsAPI.create(jobData);
+        console.log('Job created:', response.data);
+        alert('Job posted successfully! Automated outreach will begin shortly.');
+      }
       
       // Navigate to dashboard
       navigate('/dashboard');
     } catch (error) {
-      console.error('Error creating job:', error);
-      alert('Failed to create job. Please try again.');
+      console.error(`Error ${isEditing ? 'updating' : 'creating'} job:`, error);
+      alert(`Failed to ${isEditing ? 'update' : 'create'} job. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -60,7 +101,9 @@ const JobPostForm = () => {
       <div className="bg-white rounded-lg shadow-md p-8">
         <div className="flex items-center space-x-3 mb-6">
           <Briefcase className="text-primary" size={32} />
-          <h2 className="text-2xl font-bold text-gray-900">Post a New Job</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            {isEditing ? 'Edit Job' : 'Post a New Job'}
+          </h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -191,7 +234,10 @@ const JobPostForm = () => {
               disabled={loading}
               className="flex-1"
             >
-              {loading ? 'Posting...' : 'Post Job & Start Outreach'}
+              {loading 
+                ? (isEditing ? 'Updating...' : 'Posting...') 
+                : (isEditing ? 'Update Job' : 'Post Job & Start Outreach')
+              }
             </Button>
             <Button 
               type="button" 

@@ -3,6 +3,9 @@ const supabase = require("../config/supabase");
 const { getMatchScore } = require("../services/claudeService");
 
 const createCandidateApplication = async (req, res) => {
+  console.log('🔵 APPLICATION SUBMISSION RECEIVED!');
+  console.log('Request body:', req.body);
+  
   const {
     job_id,
     name,
@@ -79,11 +82,35 @@ const createCandidateApplication = async (req, res) => {
     // Calculate match score using Claude AI
     let matchScore = 0;
     try {
+      console.log('=== MATCH SCORE CALCULATION ===');
+      console.log('Candidate data:', {
+        name: candidate.name,
+        skills: candidate.skills,
+        experience_years: candidate.experience_years,
+        certifications: candidate.certifications,
+        education: candidate.education,
+        language_preference: candidate.language_preference
+      });
+      console.log('Job data:', {
+        title: job.title,
+        description: job.description,
+        requirements: job.requirements,
+        pay: job.pay,
+        location: job.location,
+        schedule: job.schedule
+      });
+      
       const matchResult = await getMatchScore(candidate, job);
       matchScore = matchResult.match_score || 0;
-      console.log(`Match score calculated: ${matchScore}% for candidate ${candidate.email}`);
+      console.log(`✓ Match score calculated: ${matchScore}%`);
+      console.log('✓ Match reasoning:', matchResult.reasoning);
+      console.log('✓ Strengths:', matchResult.strengths);
+      console.log('✓ Red flags:', matchResult.red_flags);
+      console.log('✓ Recommendation:', matchResult.recommendation);
+      console.log('================================');
     } catch (scoreError) {
-      console.error("Error calculating match score:", scoreError.message);
+      console.error("❌ Error calculating match score:", scoreError.message);
+      console.error("Full error:", scoreError);
       // Continue with 0 score if calculation fails
     }
 

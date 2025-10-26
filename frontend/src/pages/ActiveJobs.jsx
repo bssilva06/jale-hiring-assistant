@@ -39,6 +39,19 @@ const ActiveJobs = () => {
     }
   };
 
+  const handlePermanentDelete = async (jobId) => {
+    if (window.confirm('⚠️ PERMANENTLY DELETE this job posting? This cannot be undone!')) {
+      try {
+        // Call a new API endpoint for hard delete
+        await jobsAPI.permanentDelete(jobId);
+        fetchJobs(); // Refresh the list
+      } catch (error) {
+        console.error('Error permanently deleting job:', error);
+        alert('Failed to permanently delete job posting');
+      }
+    }
+  };
+
   const filteredJobs = jobs.filter((job) => {
     if (filter === 'active') return job.status === 'active';
     if (filter === 'closed') return job.status === 'closed';
@@ -183,20 +196,42 @@ const ActiveJobs = () => {
 
                 {/* Actions */}
                 <div className="flex space-x-2 pt-4 border-t">
-                  <Button
-                    variant="secondary"
-                    className="flex-1"
-                    onClick={() => navigate(`/jobs/${job.id}`)}
-                  >
-                    <Edit size={16} className="mr-2" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleDeleteJob(job.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
+                  {job.status === 'active' ? (
+                    <>
+                      <Button
+                        variant="secondary"
+                        className="flex-1"
+                        onClick={() => navigate(`/jobs/${job.id}`)}
+                      >
+                        <Edit size={16} className="mr-2" />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDeleteJob(job.id)}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="secondary"
+                        className="flex-1"
+                        onClick={() => navigate(`/jobs/${job.id}`)}
+                      >
+                        <Edit size={16} className="mr-2" />
+                        View
+                      </Button>
+                      <Button
+                        variant="danger"
+                        onClick={() => handlePermanentDelete(job.id)}
+                      >
+                        <Trash2 size={16} className="mr-1" />
+                        Delete Forever
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </Card>

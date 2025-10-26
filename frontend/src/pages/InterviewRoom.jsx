@@ -27,8 +27,9 @@ const InterviewRoom = () => {
       const response = await interviewsAPI.getById(interviewId);
       setInterview(response.data);
       
-      // Check if already completed
-      if (response.data.decision) {
+      // Only show feedback if there's already a saved decision
+      // Don't auto-show on page load
+      if (response.data.decision && response.data.status === 'completed') {
         setShowFeedback(true);
         setFeedback({
           decision: response.data.decision,
@@ -68,10 +69,11 @@ const InterviewRoom = () => {
       console.log('Video conference joined');
     });
 
-    api.addEventListener('videoConferenceLeft', () => {
-      console.log('Video conference left');
-      setShowFeedback(true);
-    });
+    // Don't auto-trigger feedback when leaving - user can manually click "End Interview"
+    // api.addEventListener('videoConferenceLeft', () => {
+    //   console.log('Video conference left');
+    //   setShowFeedback(true);
+    // });
   };
 
   if (loading) {
@@ -96,27 +98,83 @@ const InterviewRoom = () => {
   }
 
   const roomName = interview.jitsi_room_id || `jale-interview-${interviewId}`;
+  const directJitsiLink = `https://meet.jit.si/${roomName}`;
 
   return (
     <div className="min-h-screen bg-gray-900">
       <div className="container-custom py-4">
+        {/* Quick Join Option */}
+        <Card className="mb-4 bg-blue-50 border-blue-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-blue-900">Alternative: Open in New Window</h3>
+              <p className="text-sm text-blue-700">If the embedded meeting doesn't work, open it in a new window:</p>
+            </div>
+            <Button
+              variant="primary"
+              onClick={() => window.open(directJitsiLink, '_blank')}
+            >
+              <Video size={16} className="mr-2" />
+              Open Meeting
+            </Button>
+          </div>
+        </Card>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Video Area */}
           <div className="lg:col-span-3">
             <Card className="p-0 overflow-hidden h-[600px]">
               {!showFeedback ? (
                 <JitsiMeeting
-                  domain={process.env.REACT_APP_JITSI_DOMAIN || 'meet.jit.si'}
+                  domain="meet.jit.si"
                   roomName={roomName}
                   configOverwrite={{
                     startWithAudioMuted: false,
                     startWithVideoMuted: false,
-                    disableModeratorIndicator: false,
+                    prejoinPageEnabled: false,
+                    disableModeratorIndicator: true,
                     enableEmailInStats: false,
+                    enableWelcomePage: false,
+                    requireDisplayName: false,
+                    hideConferenceSubject: false,
+                    hideConferenceTimer: false,
+                    startAudioOnly: false,
+                    startScreenSharing: false,
+                    enableClosePage: false,
+                    disableInviteFunctions: true,
+                    enableNoisyMicDetection: false,
+                    fileRecordingsEnabled: false,
+                    liveStreamingEnabled: false,
+                    transcribingEnabled: false,
+                    disableProfile: true,
+                    disableRemoteMute: false,
                   }}
                   interfaceConfigOverwrite={{
                     DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
                     SHOW_JITSI_WATERMARK: false,
+                    SHOW_BRAND_WATERMARK: false,
+                    SHOW_POWERED_BY: false,
+                    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+                    SHOW_CHROME_EXTENSION_BANNER: false,
+                    MOBILE_APP_PROMO: false,
+                    DISABLE_PRESENCE_STATUS: true,
+                    DISABLE_FOCUS_INDICATOR: false,
+                    DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
+                    DISABLE_TRANSCRIPTION_SUBTITLES: false,
+                    DISABLE_RINGING: false,
+                    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
+                    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
+                    POLICY_LOGO: null,
+                    DEFAULT_BACKGROUND: '#474747',
+                    DEFAULT_LOCAL_DISPLAY_NAME: 'You',
+                    DEFAULT_REMOTE_DISPLAY_NAME: 'Participant',
+                    DEFAULT_LOGO_URL: '',
+                    TOOLBAR_BUTTONS: [
+                      'microphone', 'camera', 'desktop', 'fullscreen',
+                      'fodeviceselection', 'hangup', 'chat',
+                      'raisehand', 'videoquality', 'filmstrip', 
+                      'tileview', 'shortcuts',
+                    ],
                   }}
                   userInfo={{
                     displayName: 'Interviewer',

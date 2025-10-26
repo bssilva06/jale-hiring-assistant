@@ -6,40 +6,100 @@ const anthropic = new Anthropic({
 
 const getMatchScore = async (candidateProfile, jobRequirements) => {
   const prompt = `
-    Analyze this candidate profile against the job requirements and provide a detailed match assessment.
+    You are evaluating a candidate for a job. Analyze ALL factors carefully and provide a fair assessment.
 
-    Candidate Profile:
-    - Skills: ${JSON.stringify(candidateProfile.skills)}
-    - Experience: ${candidateProfile.experience_years} years
-    - Certifications: ${JSON.stringify(candidateProfile.certifications)}
-    - Language: ${candidateProfile.language}
+    CANDIDATE PROFILE:
+    - Name: ${candidateProfile.name}
+    - Skills: ${JSON.stringify(candidateProfile.skills || [])}
+    - Years of Experience: ${candidateProfile.experience_years || 0}
+    - Certifications: ${JSON.stringify(candidateProfile.certifications || [])}
+    - Education: ${candidateProfile.education || 'Not specified'}
+    - Language: ${candidateProfile.language_preference || 'English'}
 
-    Job Requirements:
-    - Required Skills: ${JSON.stringify(jobRequirements.requirements)}
-    - Preferred Experience: 2 years (Compare against this)
-    - Required Certifications: ["Forklift certified"] (Check if candidate has this)
+    JOB POSTING:
+    - Title: ${jobRequirements.title}
+    - Company: ${jobRequirements.company}
+    - Pay Rate: $${jobRequirements.pay}/hour
+    - Location: ${jobRequirements.location}
+    - Work Schedule: ${jobRequirements.schedule}
+    - Job Type: ${jobRequirements.job_type || 'Not specified'}
+    - Job Description: ${jobRequirements.description || 'Not provided'}
+    - Requirements: ${jobRequirements.requirements || 'Not specified'}
 
-    Provide your response in JSON format:
+    CRITICAL INSTRUCTIONS FOR SKILLS MATCHING:
+    You MUST extract the required skills from BOTH the "Job Description" and "Requirements" fields above.
+    Look for keywords like: forklift, warehouse, customer service, bilingual, Spanish, construction, etc.
+    
+    Then compare the candidate's skills array with those extracted requirements.
+    
+    SCORING INSTRUCTIONS (total = 100 points):
+
+    1. SKILLS MATCH (40 points) - HIGHEST PRIORITY
+       - Extract skills mentioned in the job description and requirements
+       - Compare with candidate's skills array
+       - Look for EXACT matches (e.g., "forklift" in both)
+       - Look for RELATED matches (e.g., "warehouse" relates to "inventory")
+       - If candidate has 80%+ of needed skills → 35-40 points
+       - If candidate has 60-80% of needed skills → 28-34 points
+       - If candidate has 40-60% of needed skills → 20-27 points
+       - Even 1-2 key skill matches are worth 15-20 points
+
+    2. EXPERIENCE (25 points)
+       - 3+ years for most jobs → 20-25 points
+       - 1-3 years → 12-19 points
+       - Less than 1 year → 5-11 points
+       - Consider if experience level fits job complexity
+
+    3. CERTIFICATIONS (15 points)
+       - Each relevant certification is valuable
+       - Industry-specific certs are highly valuable
+
+    4. LOCATION & SCHEDULE (10 points)
+       - Location compatibility
+       - Schedule alignment
+
+    5. EDUCATION & LANGUAGE (10 points)
+       - Education level
+       - Language compatibility (bilingual is a plus)
+
+    CRITICAL SCORING RULES:
+    - If candidate skills array contains words found in job description/requirements, score HIGH (70%+)
+    - Example: Candidate has ["forklift", "warehouse"] and job needs "forklift operation" → This is 80%+ match
+    - Example: Candidate has ["customer service", "bilingual"] and job needs "Spanish speaking customer service" → This is 90%+ match
+    - DO NOT penalize small gaps - focus on what matches
+    - A candidate with 2-3 key matching skills should score 75-85%
+    - Only score below 60% if there are NO skill matches or major red flags
+
+    Return ONLY valid JSON (no markdown, no explanations outside JSON):
     {
-    "match_score": <0-100>,
-    "reasoning": "<explanation>",
-    "strengths": ["strength1", "strength2"],
-    "red_flags": ["flag1", "flag2"] or [],
-    "recommendation": "proceed_to_interview" | "maybe" | "not_a_fit"
+      "match_score": <number 0-100>,
+      "reasoning": "<explain what skills matched and why score is high/low>",
+      "strengths": ["<specific matching skill or quality>", "<another strength>", "<third strength>"],
+      "red_flags": ["<concern if any>"] or [],
+      "recommendation": "proceed_to_interview" or "maybe" or "not_a_fit"
     }
 `;
 
   try {
     const msg = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307", // Use the fastest model for a hackathon
-      max_tokens: 1000,
-      temperature: 0, // Low temperature for consistent JSON output
-      system:
-        "You are an expert hiring assistant. Your goal is to provide a numeric match score and analysis in JSON format.", // System prompt
+      model: "claude-3-haiku-20240307",
+      max_tokens: 1200,
+      temperature: 0.5,
+      system: "You are a fair hiring assistant. You MUST extract skills from the job description and requirements text, then compare them to the candidate's skills array. Give HIGH scores (70-90%) when skills clearly match. Return ONLY valid JSON.",
       messages: [{ role: "user", content: prompt }],
     });
 
-    return JSON.parse(msg.content[0].text);
+    const responseText = msg.content[0].text.trim();
+    // Remove markdown code blocks if present
+    const jsonText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+    
+    const result = JSON.parse(jsonText);
+    
+    // Log what the AI found
+    console.log('AI Analysis - Match Score:', result.match_score);
+    console.log('AI Analysis - Reasoning:', result.reasoning);
+    
+    return result;
   } catch (error) {
     console.error("Error getting match score from Claude:", error);
     throw error;

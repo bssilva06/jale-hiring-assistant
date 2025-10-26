@@ -29,7 +29,7 @@ const InterviewScheduler = () => {
 
       const interviewData = {
         application_id: applicationId,
-        scheduled_time: scheduledTime.toISOString(),
+        scheduled_at: scheduledTime.toISOString(),
         duration_minutes: parseInt(formData.duration),
       };
 

@@ -120,24 +120,40 @@ const updateJob = async (req, res) => {
   }
 };
 
-// Delete (soft delete) a job
+// Delete (soft delete or permanent delete) a job
 const deleteJob = async (req, res) => {
   try {
     const { id } = req.params;
+    const { permanent } = req.query;
 
-    const { data, error } = await supabase
-      .from("jobs")
-      .update({ status: "closed" })
-      .eq("id", id)
-      .select()
-      .single();
+    if (permanent === 'true') {
+      // Hard delete - permanently remove from database
+      const { error } = await supabase
+        .from("jobs")
+        .delete()
+        .eq("id", id);
 
-    if (error) throw new Error(error.message);
+      if (error) throw new Error(error.message);
 
-    res.status(200).json({
-      message: "Job closed successfully",
-      job: data,
-    });
+      res.status(200).json({
+        message: "Job permanently deleted successfully",
+      });
+    } else {
+      // Soft delete - change status to closed
+      const { data, error } = await supabase
+        .from("jobs")
+        .update({ status: "closed" })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+
+      res.status(200).json({
+        message: "Job closed successfully",
+        job: data,
+      });
+    }
   } catch (error) {
     console.error("Error in deleteJob:", error.message);
     res.status(400).json({ error: error.message });

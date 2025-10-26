@@ -240,7 +240,10 @@ const InterviewCard = ({ interview, navigate }) => {
                 <Button
                   variant="primary"
                   size="sm"
-                  onClick={() => navigate(`/interviews/room/${interview.id}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/interviews/room/${interview.id}`);
+                  }}
                   className="whitespace-nowrap"
                 >
                   <Video size={16} className="mr-1" />

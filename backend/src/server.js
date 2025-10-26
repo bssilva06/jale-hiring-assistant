@@ -6,6 +6,8 @@ const {
   initializeInterviewReminderCron,
 } = require("./services/schedulingService");
 
+const { sendInterviewNotification } = require("./services/notificationService");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -16,6 +18,32 @@ app.use(express.json());
 // Routes
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Jale Backend Running" });
+});
+
+// Test email endpoint
+app.post("/api/test-email", async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    const result = await sendInterviewNotification(
+      email || "test@example.com",
+      "Test User",
+      "Test Job Position",
+      {
+        scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        meeting_link: "https://meet.jit.si/test-room-123",
+        interview_type: "video",
+      }
+    );
+
+    res.json({ 
+      success: result.success,
+      message: result.success ? "Email sent successfully!" : "Email configuration not set",
+      details: result
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // API Routes

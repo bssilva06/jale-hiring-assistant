@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { jobsAPI } from '../services/api';
 import ApplicationForm from '../components/candidate/ApplicationForm';
 import ChatBot from '../components/candidate/ChatBot';
 import Card from '../components/shared/Card';
-import { Briefcase, DollarSign, MapPin, Clock, CheckCircle } from 'lucide-react';
+import Button from '../components/shared/Button';
+import { Briefcase, DollarSign, MapPin, Clock, CheckCircle, Search, TrendingUp } from 'lucide-react';
 
 const CandidatePortal = () => {
   const { jobId } = useParams();
+  const navigate = useNavigate();
   const [job, setJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,9 +61,19 @@ const CandidatePortal = () => {
         {/* If browsing jobs (no jobId), show job listings */}
         {!jobId && !selectedJob && (
           <>
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Available Jobs</h1>
-              <p className="text-gray-600">Browse open positions and apply today!</p>
+            <div className="mb-8 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Available Jobs</h1>
+                <p className="text-gray-600">Browse open positions and apply today!</p>
+              </div>
+              <Button 
+                variant="primary"
+                onClick={() => navigate('/apply/match')}
+                className="flex items-center"
+              >
+                <TrendingUp size={18} className="mr-2" />
+                Find My Match
+              </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">

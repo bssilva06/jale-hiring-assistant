@@ -16,6 +16,8 @@ import ActiveJobs from "./pages/ActiveJobs";
 import CandidatePortal from "./pages/CandidatePortal";
 import InterviewRoom from "./pages/InterviewRoom";
 import InterviewsPage from "./pages/InterviewsPage";
+import ApplicationDetail from "./pages/ApplicationDetail";
+import JobMatcher from "./pages/JobMatcher";
 
 // Components
 import CandidateList from "./components/hiring/CandidateList";
@@ -39,6 +41,7 @@ function App() {
               <main className="p-6 md:p-8">
                 <Routes>
                   <Route path="/" element={<CandidatePortal />} />
+                  <Route path="/match" element={<JobMatcher />} />
                   <Route 
                     path="/success" 
                     element={
@@ -102,14 +105,7 @@ function App() {
                     />
                     <Route
                       path="/applications/:applicationId"
-                      element={
-                        <div>
-                          <h1 className="text-3xl font-bold mb-6">
-                            Application Details
-                          </h1>
-                          <CandidateList />
-                        </div>
-                      }
+                      element={<ApplicationDetail />}
                     />
                     <Route
                       path="/candidates"
