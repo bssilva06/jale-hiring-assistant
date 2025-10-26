@@ -11,11 +11,14 @@ ALTER TABLE interviews DISABLE ROW LEVEL SECURITY;
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS company TEXT;
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'en';
+ALTER TABLE jobs ADD COLUMN IF NOT EXISTS job_type TEXT DEFAULT 'Full-time';
 
 -- Ensure all expected columns exist in candidates table
 ALTER TABLE candidates ADD COLUMN IF NOT EXISTS phone TEXT;
 ALTER TABLE candidates ADD COLUMN IF NOT EXISTS certifications TEXT[] DEFAULT '{}';
 ALTER TABLE candidates ADD COLUMN IF NOT EXISTS language_preference TEXT DEFAULT 'en';
+ALTER TABLE candidates ADD COLUMN IF NOT EXISTS resume_url TEXT;
+ALTER TABLE candidates ADD COLUMN IF NOT EXISTS education TEXT;
 
 -- Create chat_messages table if it doesn't exist
 CREATE TABLE IF NOT EXISTS chat_messages (

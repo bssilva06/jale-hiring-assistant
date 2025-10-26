@@ -36,7 +36,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       <aside className={`
         fixed top-0 left-0 h-full bg-white shadow-lg z-50 w-64 transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:translate-x-0 md:static md:shadow-none
+        md:translate-x-0 md:sticky md:top-[88px] md:h-[calc(100vh-88px)] md:shadow-md md:z-30
       `}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200 md:hidden">
           <h2 className="text-xl font-bold text-gray-900">Menu</h2>
@@ -45,7 +45,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 md:overflow-y-auto md:h-[calc(100vh-88px-1rem)]">
           {menuItems.map((item) => (
             <Link
               key={item.path}

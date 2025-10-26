@@ -12,6 +12,7 @@ const createJob = async (req, res) => {
       requirements,
       description,
       language,
+      job_type,
     } = req.body;
 
     const { data, error } = await supabase
@@ -26,6 +27,7 @@ const createJob = async (req, res) => {
           requirements,
           description,
           language,
+          job_type: job_type || "Full-time",
           status: "active",
         },
       ])

@@ -16,6 +16,8 @@ const createCandidateApplication = async (req, res) => {
     experience_years,
     certifications,
     language_preference,
+    resume_url,
+    education,
   } = req.body;
 
   try {
@@ -47,40 +49,64 @@ const createCandidateApplication = async (req, res) => {
     let candidate;
     if (existingCandidate) {
       // Update existing candidate
+      const updateData = {
+        name,
+        phone,
+        skills,
+        experience_years,
+        certifications,
+        language_preference,
+      };
+
+      // Only update resume_url if provided
+      if (resume_url) {
+        updateData.resume_url = resume_url;
+      }
+
+      // Only update education if provided
+      if (education) {
+        updateData.education = education;
+      }
+
       const { data, error: updateError } = await supabase
         .from("candidates")
-        .update({
-          name,
-          phone,
-          skills,
-          experience_years,
-          certifications,
-          language_preference,
-        })
+        .update(updateData)
         .eq("email", email)
         .select()
         .single();
-      
+
       if (updateError) {
         throw new Error(`Candidate update failed: ${updateError.message}`);
       }
       candidate = data;
     } else {
       // Create new candidate
+      const insertData = {
+        name,
+        email,
+        phone,
+        skills,
+        experience_years,
+        certifications,
+        language_preference,
+      };
+
+      // Only include resume_url if provided
+      if (resume_url) {
+        insertData.resume_url = resume_url;
+      }
+
+      // Only include education if provided
+      if (education) {
+        insertData.education = education;
+      }
+
       const { data, error: insertError } = await supabase
         .from("candidates")
-        .insert([{
-          name,
-          email,
-          phone,
-          skills,
-          experience_years,
-          certifications,
-          language_preference,
-        }])
+        .insert([insertData])
         .select()
         .single();
-      
+
       if (insertError) {
         throw new Error(`Candidate creation failed: ${insertError.message}`);
       }

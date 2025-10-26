@@ -11,6 +11,7 @@ const JobMatcher = () => {
   const [parsingResume, setParsingResume] = useState(false);
   const [matchedJobs, setMatchedJobs] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [uploadedResume, setUploadedResume] = useState(null); // Store the actual resume file
   const [formData, setFormData] = useState({
     // Job Preferences
     jobType: '',
@@ -19,7 +20,7 @@ const JobMatcher = () => {
     maxPay: '',
     location: '',
     preferredField: '',
-    
+
     // Candidate Info
     name: '',
     email: '',
@@ -53,9 +54,12 @@ const JobMatcher = () => {
     setParsingResume(true);
 
     try {
+      // Store the file for later use
+      setUploadedResume(file);
+
       const formDataUpload = new FormData();
       formDataUpload.append('resume', file);
-      
+
       const response = await fetch('http://localhost:5000/api/candidates/parse-resume-file', {
         method: 'POST',
         body: formDataUpload,
@@ -80,10 +84,11 @@ const JobMatcher = () => {
         education: parsedData.education || prev.education,
       }));
 
-      alert('✅ Resume parsed successfully! Please review the auto-filled information.');
+      alert('✅ Resume parsed successfully! Resume will be attached to your application.');
     } catch (error) {
       console.error('Error parsing resume:', error);
       alert('❌ ' + error.message);
+      setUploadedResume(null); // Clear on error
     } finally {
       setParsingResume(false);
       e.target.value = '';
@@ -219,8 +224,8 @@ const JobMatcher = () => {
   };
 
   const handleApply = (jobId) => {
-    navigate(`/apply/${jobId}`, { 
-      state: { 
+    navigate(`/apply/${jobId}`, {
+      state: {
         prefillData: {
           name: formData.name,
           email: formData.email,
@@ -230,7 +235,8 @@ const JobMatcher = () => {
           certifications: formData.certifications.split(',').map(s => s.trim()).filter(s => s),
           education: formData.education,
           language_preference: formData.language_preference,
-        }
+        },
+        uploadedResume: uploadedResume, // Pass the uploaded resume file
       }
     });
   };
@@ -368,16 +374,16 @@ const JobMatcher = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Resume Upload */}
-          <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-dashed border-purple-300 rounded-lg p-6">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-dashed border-blue-300 rounded-lg p-6">
             <div className="text-center">
-              <Upload className="mx-auto text-purple-500 mb-3" size={48} />
+              <Upload className="mx-auto text-primary mb-3" size={48} />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Upload Your Resume (Optional)
               </h3>
               <p className="text-sm text-gray-600 mb-4">
                 Let AI auto-fill your information from your resume!
               </p>
-              
+
               <div className="flex items-center justify-center">
                 <label className="cursor-pointer">
                   <input
@@ -387,7 +393,7 @@ const JobMatcher = () => {
                     disabled={parsingResume}
                     className="hidden"
                   />
-                  <div className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors inline-flex items-center space-x-2">
+                  <div className="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-secondary transition-colors inline-flex items-center space-x-2">
                     {parsingResume ? (
                       <>
                         <Loader className="animate-spin" size={20} />
@@ -402,7 +408,7 @@ const JobMatcher = () => {
                   </div>
                 </label>
               </div>
-              
+
               <p className="text-xs text-gray-500 mt-3">
                 PDF or TXT • Max 5MB • Or fill manually below
               </p>

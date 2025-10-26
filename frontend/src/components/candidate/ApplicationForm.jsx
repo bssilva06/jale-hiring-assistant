@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { candidatesAPI } from '../../services/api';
 import Button from '../shared/Button';
-import { User, Mail, Phone, Award, FileText, Languages, Upload, Loader } from 'lucide-react';
+import { User, Mail, Phone, Award, FileText, Languages, Upload, Loader, CheckCircle } from 'lucide-react';
 
 const ApplicationForm = ({ jobId }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [parsingResume, setParsingResume] = useState(false);
+  const [attachedResume, setAttachedResume] = useState(null); // Store resume file
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,9 +17,33 @@ const ApplicationForm = ({ jobId }) => {
     skills: '',
     experience_years: '',
     certifications: '',
+    education: '',
     language_preference: 'en',
     resume_url: '',
   });
+
+  // Pre-fill form from navigation state (from JobMatcher)
+  useEffect(() => {
+    if (location.state?.prefillData) {
+      const prefill = location.state.prefillData;
+      setFormData(prev => ({
+        ...prev,
+        name: prefill.name || prev.name,
+        email: prefill.email || prev.email,
+        phone: prefill.phone || prev.phone,
+        experience_years: prefill.experience_years?.toString() || prev.experience_years,
+        skills: Array.isArray(prefill.skills) ? prefill.skills.join('\n') : prefill.skills || prev.skills,
+        certifications: Array.isArray(prefill.certifications) ? prefill.certifications.join('\n') : prefill.certifications || prev.certifications,
+        education: prefill.education || prev.education,
+        language_preference: prefill.language_preference || prev.language_preference,
+      }));
+    }
+
+    // Get uploaded resume from navigation state
+    if (location.state?.uploadedResume) {
+      setAttachedResume(location.state.uploadedResume);
+    }
+  }, [location.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,10 +70,13 @@ const ApplicationForm = ({ jobId }) => {
     setParsingResume(true);
 
     try {
+      // Store the file
+      setAttachedResume(file);
+
       // Create FormData to send file
       const formData = new FormData();
       formData.append('resume', file);
-      
+
       // Send to backend for parsing
       const response = await fetch('http://localhost:5000/api/candidates/parse-resume-file', {
         method: 'POST',
@@ -71,12 +100,14 @@ const ApplicationForm = ({ jobId }) => {
         skills: parsedData.skills?.join('\n') || prev.skills,
         experience_years: parsedData.experience_years?.toString() || prev.experience_years,
         certifications: parsedData.certifications?.join('\n') || prev.certifications,
+        education: parsedData.education || prev.education,
       }));
 
-      alert('✅ Resume parsed successfully! Please review and edit the auto-filled information.');
+      alert('✅ Resume parsed successfully! Resume will be attached to your application.');
     } catch (error) {
       console.error('Error parsing resume:', error);
       alert('❌ ' + error.message + '\n\nPlease fill out the form manually.');
+      setAttachedResume(null); // Clear on error
     } finally {
       setParsingResume(false);
       // Reset file input
@@ -107,6 +138,17 @@ const ApplicationForm = ({ jobId }) => {
         experience_years: parseInt(formData.experience_years) || 0,
       };
 
+      // Add resume information if a file was uploaded
+      if (attachedResume) {
+        // For now, store the filename as a placeholder
+        // In production, you would upload to Supabase Storage and get a URL
+        candidateData.resume_url = `resume-${Date.now()}-${attachedResume.name}`;
+        console.log('Resume attached:', attachedResume.name);
+      } else if (formData.resume_url) {
+        // Use the manually entered URL if provided
+        candidateData.resume_url = formData.resume_url;
+      }
+
       // If jobId is provided, also create application
       const response = await candidatesAPI.create({
         ...candidateData,
@@ -114,12 +156,12 @@ const ApplicationForm = ({ jobId }) => {
       });
 
       console.log('Application submitted:', response.data);
-      
+
       // Navigate to success page
       navigate('/apply/success');
     } catch (error) {
       console.error('Error submitting application:', error);
-      
+
       // Handle specific error cases
       if (error.response?.status === 409) {
         alert('⚠️ You have already applied for this job.\n\nYou can only submit one application per job position.');
@@ -291,50 +333,95 @@ const ApplicationForm = ({ jobId }) => {
               Resume
             </h3>
 
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-300 rounded-lg p-6">
-              <div className="text-center">
-                <Upload className="mx-auto text-blue-500 mb-3" size={48} />
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  Upload Your Resume
-                </h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Our AI will automatically extract your information and fill out the form for you!
-                </p>
-                
-                <div className="flex items-center justify-center">
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept=".pdf,.txt"
-                      onChange={handleFileUpload}
-                      disabled={parsingResume}
-                      className="hidden"
-                    />
-                    <div className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors inline-flex items-center space-x-2">
-                      {parsingResume ? (
-                        <>
-                          <Loader className="animate-spin" size={20} />
-                          <span>Parsing Resume...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Upload size={20} />
-                          <span>Choose File</span>
-                        </>
-                      )}
-                    </div>
-                  </label>
-                </div>
-                
-                <p className="text-xs text-gray-500 mt-3">
-                  Supported formats: PDF, TXT (Max 5MB)
-                </p>
-              </div>
-            </div>
+            {attachedResume ? (
+              // Show attached resume
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg p-6">
+                <div className="text-center">
+                  <CheckCircle className="mx-auto text-green-600 mb-3" size={48} />
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                    Resume Attached
+                  </h4>
+                  <p className="text-sm text-gray-700 mb-4">
+                    <strong>{attachedResume.name}</strong> ({(attachedResume.size / 1024).toFixed(1)} KB)
+                  </p>
 
-            <div className="text-center text-sm text-gray-500">
-              <span>Or fill out the form manually below</span>
-            </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <label className="cursor-pointer">
+                      <input
+                        type="file"
+                        accept=".pdf,.txt"
+                        onChange={handleFileUpload}
+                        disabled={parsingResume}
+                        className="hidden"
+                      />
+                      <div className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors inline-flex items-center space-x-2">
+                        <Upload size={18} />
+                        <span>Replace</span>
+                      </div>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setAttachedResume(null)}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <p className="text-xs text-green-700 mt-3">
+                    ✓ This resume will be submitted with your application
+                  </p>
+                </div>
+              </div>
+            ) : (
+              // Show upload prompt
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-300 rounded-lg p-6">
+                <div className="text-center">
+                  <Upload className="mx-auto text-blue-500 mb-3" size={48} />
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                    Upload Your Resume
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Our AI will automatically extract your information and fill out the form for you!
+                  </p>
+
+                  <div className="flex items-center justify-center">
+                    <label className="cursor-pointer">
+                      <input
+                        type="file"
+                        accept=".pdf,.txt"
+                        onChange={handleFileUpload}
+                        disabled={parsingResume}
+                        className="hidden"
+                      />
+                      <div className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors inline-flex items-center space-x-2">
+                        {parsingResume ? (
+                          <>
+                            <Loader className="animate-spin" size={20} />
+                            <span>Parsing Resume...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload size={20} />
+                            <span>Choose File</span>
+                          </>
+                        )}
+                      </div>
+                    </label>
+                  </div>
+
+                  <p className="text-xs text-gray-500 mt-3">
+                    Supported formats: PDF, TXT (Max 5MB)
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!attachedResume && (
+              <div className="text-center text-sm text-gray-500">
+                <span>Or fill out the form manually below</span>
+              </div>
+            )}
           </div>
 
           {/* AI Chatbot Info */}
