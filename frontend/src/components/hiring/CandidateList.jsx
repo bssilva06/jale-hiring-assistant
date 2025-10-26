@@ -32,10 +32,11 @@ const CandidateList = ({ jobId = null }) => {
   }, [jobId]);
 
   const filteredApplications = applications.filter(app => {
-    if (filter === 'all') return true;
-    if (filter === 'high') return app.match_score >= 80;
-    if (filter === 'medium') return app.match_score >= 60 && app.match_score < 80;
-    if (filter === 'low') return app.match_score < 60;
+    // Exclude rejected candidates from the default 'all' view
+    if (filter === 'all') return app.status !== 'rejected';
+    if (filter === 'high') return app.match_score >= 80 && app.status !== 'rejected';
+    if (filter === 'medium') return app.match_score >= 60 && app.match_score < 80 && app.status !== 'rejected';
+    if (filter === 'low') return app.match_score < 60 && app.status !== 'rejected';
     return app.status === filter;
   });
 
@@ -87,18 +88,18 @@ const CandidateList = ({ jobId = null }) => {
         <button
           onClick={() => setFilter('all')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'all' 
-              ? 'bg-primary text-white' 
+            filter === 'all'
+              ? 'bg-primary text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
-          All ({applications.length})
+          Active ({applications.filter(app => app.status !== 'rejected' && app.status !== 'hired').length})
         </button>
         <button
           onClick={() => setFilter('high')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'high' 
-              ? 'bg-green-600 text-white' 
+            filter === 'high'
+              ? 'bg-green-600 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
@@ -107,8 +108,8 @@ const CandidateList = ({ jobId = null }) => {
         <button
           onClick={() => setFilter('medium')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'medium' 
-              ? 'bg-yellow-600 text-white' 
+            filter === 'medium'
+              ? 'bg-yellow-600 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
@@ -117,12 +118,32 @@ const CandidateList = ({ jobId = null }) => {
         <button
           onClick={() => setFilter('low')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            filter === 'low' 
-              ? 'bg-red-600 text-white' 
+            filter === 'low'
+              ? 'bg-red-600 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
           Poor (&lt;60%)
+        </button>
+        <button
+          onClick={() => setFilter('hired')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            filter === 'hired'
+              ? 'bg-green-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
+        >
+          Hired ({applications.filter(app => app.status === 'hired').length})
+        </button>
+        <button
+          onClick={() => setFilter('rejected')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            filter === 'rejected'
+              ? 'bg-red-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
+        >
+          Rejected ({applications.filter(app => app.status === 'rejected').length})
         </button>
       </div>
 

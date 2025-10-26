@@ -329,11 +329,19 @@ const InterviewRoom = () => {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-gray-600">Name</p>
-                  <p className="font-semibold">{interview.application?.candidate?.name || 'N/A'}</p>
+                  <p className="font-semibold">{interview.candidate?.name || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Email</p>
+                  <p className="text-sm">{interview.candidate?.email || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Phone</p>
+                  <p className="text-sm">{interview.candidate?.phone || 'N/A'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Position</p>
-                  <p className="font-semibold">{interview.application?.job?.title || 'N/A'}</p>
+                  <p className="font-semibold">{interview.job?.title || 'N/A'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Match Score</p>
@@ -341,7 +349,7 @@ const InterviewRoom = () => {
                     {interview.application?.match_score || 0}%
                   </p>
                 </div>
-                {interview.application?.strengths && (
+                {interview.application?.strengths && interview.application.strengths.length > 0 && (
                   <div>
                     <p className="text-sm text-gray-600 mb-2">Strengths</p>
                     <ul className="space-y-1">

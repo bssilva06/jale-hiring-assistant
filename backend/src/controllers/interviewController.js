@@ -232,6 +232,32 @@ const updateInterview = async (req, res) => {
         .eq("id", data.application_id);
     }
 
+    // If a hiring decision was made, update application status accordingly
+    if (updates.decision) {
+      let applicationStatus;
+
+      switch (updates.decision) {
+        case "hire":
+          applicationStatus = "hired";
+          break;
+        case "reject":
+          applicationStatus = "rejected";
+          break;
+        case "maybe":
+          applicationStatus = "interviewed"; // Keep as interviewed for further review
+          break;
+        default:
+          applicationStatus = null;
+      }
+
+      if (applicationStatus) {
+        await supabase
+          .from("applications")
+          .update({ status: applicationStatus })
+          .eq("id", data.application_id);
+      }
+    }
+
     res.status(200).json({
       message: "Interview updated successfully",
       interview: data,

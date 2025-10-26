@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { jobsAPI, interviewsAPI } from '../services/api';
+import { jobsAPI, interviewsAPI, applicationsAPI } from '../services/api';
 import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
 import CandidateList from '../components/hiring/CandidateList';
@@ -31,10 +31,20 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      // Fetch jobs (interviews might fail if table doesn't exist yet)
+      // Fetch jobs
       const jobsRes = await jobsAPI.getAll();
       const jobs = jobsRes.data || [];
 
+      // Fetch applications
+      let applications = [];
+      try {
+        const applicationsRes = await applicationsAPI.getAll();
+        applications = applicationsRes.data || [];
+      } catch (appError) {
+        console.warn('Applications table error:', appError.message);
+      }
+
+      // Fetch interviews
       let interviews = [];
       try {
         const interviewsRes = await interviewsAPI.getAll();
@@ -45,14 +55,20 @@ const Dashboard = () => {
 
       console.log('Dashboard API Response:', {
         jobs,
+        applications,
         interviews
       });
 
+      // Calculate stats
+      const totalApplications = applications.length;
+      const hiredCount = applications.filter(app => app.status === 'hired').length;
+      const scheduledInterviews = interviews.filter(i => i.status === 'scheduled').length;
+
       setStats({
         totalJobs: jobs.length,
-        totalApplications: 0, // TODO: Add applications endpoint
-        interviewsScheduled: interviews.filter(i => i.status === 'scheduled').length,
-        hired: 0, // TODO: Calculate from applications when endpoint is ready
+        totalApplications,
+        interviewsScheduled: scheduledInterviews,
+        hired: hiredCount,
       });
 
       setRecentJobs(jobs.slice(0, 5));

@@ -1,6 +1,6 @@
-# 🎨 Design Customization Guide - Make It Look Less AI
+# Design Customization Guide - Make It Look Less AI
 
-## 1️⃣ Add Your Company Logo
+## 1. Add Your Company Logo
 
 ### Step A: Add Logo File
 
@@ -14,18 +14,18 @@ I'll update the Navbar component to use your logo instead of the briefcase icon.
 
 ---
 
-## 2️⃣ Custom Color Scheme
+## 2. Custom Color Scheme
 
 ### Where to Find Design Inspiration:
 
-**🎨 Color Palette Tools:**
+**Color Palette Tools:**
 
 - **Coolors.co** - https://coolors.co/ (Generate palettes)
 - **Adobe Color** - https://color.adobe.com/create
 - **Happy Hues** - https://www.happyhues.co/ (Complete color schemes)
 - **Tailwind Color Shades** - https://tailwindshades.com/
 
-**🏢 Look at Real Companies:**
+**Look at Real Companies:**
 
 - **Greenhouse** (greenhouse.io) - Recruiting platform
 - **Lever** (lever.co) - Talent acquisition
@@ -69,7 +69,7 @@ Accent: #DC2626 (Red)
 
 ---
 
-## 3️⃣ Typography & Fonts
+## 3. Typography & Fonts
 
 ### Google Fonts (Free & Professional):
 
@@ -113,29 +113,29 @@ fontFamily: {
 
 ---
 
-## 4️⃣ Design Resources for Inspiration
+## 4. Design Resources for Inspiration
 
-### 🎯 Real Hiring Platform Designs:
+### Real Hiring Platform Designs:
 
 - **Dribbble** - https://dribbble.com/search/hiring-platform
 - **Behance** - https://behance.net/search/projects?search=recruitment%20dashboard
 - **Awwwards** - https://awwwards.com/ (Award-winning designs)
 
-### 📸 UI Component Libraries:
+### UI Component Libraries:
 
 - **Tailwind UI** - https://tailwindui.com/components (Premium examples)
 - **Headless UI** - https://headlessui.com/ (Free components)
 - **DaisyUI** - https://daisyui.com/ (Tailwind component library)
 - **Shadcn UI** - https://ui.shadcn.com/ (Modern component collection)
 
-### 🖼️ Icons Beyond Lucide:
+### Icons Beyond Lucide:
 
 - **Heroicons** - https://heroicons.com/ (Tailwind's icons)
 - **Feather Icons** - https://feathericons.com/
 - **Font Awesome** - https://fontawesome.com/
 - **Phosphor Icons** - https://phosphoricons.com/
 
-### 🎨 Illustrations & Graphics:
+### Illustrations & Graphics:
 
 - **unDraw** - https://undraw.co/ (Customizable illustrations)
 - **Storyset** - https://storyset.com/ (Animated illustrations)
@@ -143,7 +143,7 @@ fontFamily: {
 
 ---
 
-## 5️⃣ Quick Custom Design Changes
+## 5. Quick Custom Design Changes
 
 ### Custom Landing Page Background:
 
@@ -163,7 +163,7 @@ Instead of gradient, use:
 
 ---
 
-## 6️⃣ Real Company Brand Kits (for Inspiration)
+## 6. Real Company Brand Kits (for Inspiration)
 
 Look at these brand guidelines:
 
@@ -174,7 +174,7 @@ Look at these brand guidelines:
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 1. **Choose your color scheme** (or use your company colors)
 2. **Add your logo** to `frontend/public/`
