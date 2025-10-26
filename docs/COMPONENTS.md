@@ -612,9 +612,10 @@ Frontend Components
        ↓
 Backend API (localhost:5000)
        ↓
-   ┌────────┬──────────┐
-   ↓        ↓          ↓
-Supabase  Claude AI  n8n
+   ┌────────┬──────────┬──────────┐
+   ↓        ↓          ↓          ↓
+Supabase  Claude AI  Nodemailer  node-cron
+(Database) (AI)      (Email)     (Scheduling)
 ```
 
 ## Component Best Practices

@@ -47,8 +47,8 @@ Built in 48 hours to solve real-world hiring challenges in the construction and 
 ### Smart Scheduling
 
 - Automated interview coordination
-- Calendar integrations and reminders
-- SMS/Email notifications via n8n workflows
+- Email notifications and reminders
+- Scheduled task automation with node-cron
 
 ### Video Interviews
 
@@ -109,7 +109,7 @@ _Browse jobs and apply with AI assistance_
 | **Backend**    | Node.js • Express • REST API • JWT Authentication                       |
 | **Database**   | Supabase • PostgreSQL • pgvector (embeddings) • Real-time subscriptions |
 | **AI/ML**      | Claude 3 (Anthropic) • Vector embeddings • Semantic search              |
-| **Automation** | n8n • Email/SMS workflows • Calendar integrations                       |
+| **Automation** | Nodemailer • node-cron • Email notifications                            |
 | **Video**      | Jitsi Meet SDK • WebRTC • P2P conferencing                              |
 | **Dev Tools**  | npm • PostCSS • Axios • ESLint • Git                                    |
 
@@ -124,7 +124,6 @@ _Browse jobs and apply with AI assistance_
 - Node.js 18+ and npm
 - Supabase account ([Sign up free](https://supabase.com))
 - Anthropic API key ([Get here](https://console.anthropic.com))
-- n8n installed globally or via npx
 
 ### 1. Clone the Repository
 
@@ -162,7 +161,10 @@ PORT=5000
 SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_KEY=your_supabase_service_key
 CLAUDE_API_KEY=your_claude_api_key
-N8N_WEBHOOK_URL=your_n8n_webhook_url
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
 ```
 
 **Note:** See `.env.example` files for full configuration options
@@ -185,18 +187,10 @@ npm run dev
 # Runs at http://localhost:5000
 ```
 
-**Terminal 3 - n8n (Optional):**
-
-```bash
-npx n8n
-# Opens at http://localhost:5678
-```
-
 ### 5. Access the App
 
 - **Frontend**: [http://localhost:3000](http://localhost:3000)
 - **Backend API**: [http://localhost:5000](http://localhost:5000)
-- **n8n Dashboard**: [http://localhost:5678](http://localhost:5678)
 
 ---
 
@@ -236,8 +230,8 @@ graph TB
 
     subgraph "AI & Automation"
         U[Claude AI API]
-        V[n8n Workflows]
-        W[Email/SMS]
+        V[Nodemailer]
+        W[node-cron]
     end
 
     subgraph "Video"
@@ -252,7 +246,7 @@ graph TB
     Q --> U
     P --> T
     R --> V
-    V --> W
+    R --> W
 
     style A fill:#1B56FD,stroke:#0118D8,color:#FFF
     style B fill:#0118D8,stroke:#1B56FD,color:#FFF
@@ -280,13 +274,12 @@ jale-hiring-assistant/
 │       ├── services/        # Business logic
 │       ├── middleware/      # Auth & error handling
 │       └── routes/          # API endpoints
-├── n8n-workflows/         # Automation workflows
-│   └── exports/             # Workflow JSON exports
 └── docs/                  # Documentation
-    ├── API.md               # API documentation
-    ├── ARCHITECTURE.md      # System design
-    ├── SETUP.md            # Detailed setup guide
-    └── DEMO_SCRIPT.md      # Presentation guide
+    ├── API_REFERENCE.md     # API documentation
+    ├── ARCHITECTURE_MERMAID.md # System design diagrams
+    ├── COMPONENTS.md        # Component library
+    ├── FRONTEND.md          # Frontend architecture
+    └── SETUP.md             # Detailed setup guide
 ```
 
 ---

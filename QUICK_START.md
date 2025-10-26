@@ -46,7 +46,6 @@ PORT=5000
 SUPABASE_URL=your-supabase-url
 SUPABASE_SERVICE_KEY=your-supabase-service-key
 ANTHROPIC_API_KEY=your-claude-api-key
-N8N_WEBHOOK_URL=your-n8n-webhook-url
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
@@ -74,16 +73,6 @@ npm start
 ```
 
 The frontend application will open at `http://localhost:3000`
-
-### Optional: Run n8n Workflows
-
-In a third terminal:
-
-```bash
-npx n8n
-```
-
-n8n will be accessible at `http://localhost:5678`
 
 ## Available Routes
 
@@ -250,9 +239,10 @@ npm install
 ## Additional Resources
 
 - [Setup Guide](docs/SETUP.md) - Detailed configuration instructions
-- [API Documentation](docs/API.md) - Complete API reference
-- [Architecture](docs/ARCHITECTURE.md) - System architecture overview
-- [Component Showcase](COMPONENT_SHOWCASE.md) - Visual component guide
+- [API Reference](docs/API_REFERENCE.md) - Complete API documentation
+- [Frontend Guide](docs/FRONTEND.md) - Frontend architecture and components
+- [Component Library](docs/COMPONENTS.md) - Visual component reference
+- [Architecture Overview](docs/ARCHITECTURE_MERMAID.md) - System design with diagrams
 
 ## Support
 

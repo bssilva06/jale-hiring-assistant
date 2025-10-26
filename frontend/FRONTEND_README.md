@@ -139,12 +139,12 @@ All components are built mobile-first with Tailwind's responsive classes. Test o
 ## 🎯 Demo Flow
 
 1. **Hiring Manager** creates job → `/jobs/new`
-2. **System** sends automated outreach (n8n workflow)
-3. **Candidate** applies → `/apply/:jobId`
-4. **AI** calculates match score (Claude)
-5. **Hiring Manager** reviews candidates → `/candidates`
-6. **Hiring Manager** schedules interview → `/interviews/schedule/:id`
-7. **System** sends reminders (n8n workflow)
+2. **Candidate** applies → `/apply/:jobId`
+3. **AI** calculates match score (Claude)
+4. **Hiring Manager** reviews candidates → `/candidates`
+5. **Hiring Manager** schedules interview → `/interviews/schedule/:id`
+6. **System** sends email confirmation (Nodemailer)
+7. **System** sends reminders (node-cron + Nodemailer)
 8. **Video Interview** → `/interviews/room/:id`
 9. **Hiring Manager** submits feedback
 10. **System** updates candidate status

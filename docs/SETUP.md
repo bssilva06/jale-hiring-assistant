@@ -15,7 +15,6 @@ Comprehensive setup instructions for the Jale AI Hiring Assistant.
 
 ### Optional Services
 - **Gmail Account** - For email notifications (SMTP)
-- **n8n** - For workflow automation
 - **Twilio Account** - For SMS notifications (optional)
 
 ## Installation
@@ -192,9 +191,6 @@ SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
 
-# n8n Automation (Optional)
-N8N_WEBHOOK_URL=http://localhost:5678/webhook/your-webhook-id
-
 # Twilio SMS (Optional)
 TWILIO_ACCOUNT_SID=your-twilio-sid
 TWILIO_AUTH_TOKEN=your-twilio-token
@@ -207,37 +203,6 @@ TWILIO_PHONE_NUMBER=+1234567890
 2. Go to Google Account > Security > App Passwords
 3. Generate an app password for "Mail"
 4. Use this 16-character password in `SMTP_PASS`
-
-### 6. n8n Setup (Optional)
-
-n8n enables workflow automation for email/SMS notifications.
-
-#### Install n8n
-
-```bash
-npm install -g n8n
-```
-
-#### Start n8n
-
-```bash
-n8n
-```
-
-Access n8n at `http://localhost:5678`
-
-#### Import Workflows
-
-1. In n8n, click "Workflows" > "Import from File"
-2. Import workflows from `n8n-workflows/` directory:
-   - `interview-reminders.json`
-   - `application-notifications.json`
-
-#### Configure Webhooks
-
-1. Open each workflow
-2. Copy the webhook URL
-3. Update `N8N_WEBHOOK_URL` in backend `.env`
 
 ## Running the Application
 
@@ -264,14 +229,6 @@ npm start
 ```
 
 The application will open at `http://localhost:3000`
-
-#### Terminal 3: n8n (Optional)
-
-```bash
-n8n
-```
-
-Access n8n dashboard at `http://localhost:5678`
 
 ## Verification
 
@@ -509,7 +466,7 @@ After setup:
 
 - **Documentation:** Check `docs/` folder
 - **API Reference:** See `docs/API_REFERENCE.md`
-- **Architecture:** See `docs/ARCHITECTURE.md`
+- **Architecture:** See `docs/ARCHITECTURE_MERMAID.md`
 - **GitHub Issues:** [Report bugs](https://github.com/bssilva06/jale-hiring-assistant/issues)
 
 ## Additional Resources
@@ -518,4 +475,4 @@ After setup:
 - [Anthropic API Documentation](https://docs.anthropic.com)
 - [React Documentation](https://react.dev)
 - [Express.js Guide](https://expressjs.com/en/guide/routing.html)
-- [n8n Documentation](https://docs.n8n.io)
+- [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
