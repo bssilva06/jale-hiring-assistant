@@ -160,7 +160,68 @@ const getChatResponse = async (userMessage, jobDetails, history) => {
   }
 };
 
+const parseResume = async (resumeText) => {
+  const prompt = `
+    You are a resume parser. Extract structured information from the following resume text.
+
+    RESUME TEXT:
+    ${resumeText}
+
+    Extract the following information and return it as a JSON object:
+    {
+      "name": "Full name of the candidate",
+      "email": "Email address (if found)",
+      "phone": "Phone number (if found)",
+      "skills": ["skill1", "skill2", "skill3"],
+      "experience_years": <number of years of total work experience>,
+      "certifications": ["cert1", "cert2"],
+      "education": "Highest education level or degree",
+      "summary": "Brief 1-2 sentence summary of the candidate's background"
+    }
+
+    INSTRUCTIONS:
+    - Extract ALL skills mentioned (technical skills, soft skills, tools, languages, etc.)
+    - For experience_years, calculate total years across all jobs listed
+    - Include ALL certifications, licenses, and training mentioned
+    - For education, include degree and field if available
+    - If information is not found, use empty string "" for text or empty array [] for lists
+    - For experience_years, use 0 if not determinable
+    - Return ONLY valid JSON, no markdown formatting
+
+    Extract the information now:
+  `;
+
+  try {
+    const message = await anthropic.messages.create({
+      model: "claude-3-haiku-20240307",
+      max_tokens: 2048,
+      temperature: 0,
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
+
+    const responseText = message.content[0].text;
+    console.log('📄 Resume parsing response:', responseText);
+
+    // Clean up markdown code blocks if present
+    const cleanedResponse = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    
+    const parsedData = JSON.parse(cleanedResponse);
+    console.log('✅ Parsed resume data:', parsedData);
+    
+    return parsedData;
+  } catch (error) {
+    console.error('❌ Error parsing resume:', error);
+    throw new Error('Failed to parse resume: ' + error.message);
+  }
+};
+
 module.exports = {
   getMatchScore,
   getChatResponse,
+  parseResume,
 };

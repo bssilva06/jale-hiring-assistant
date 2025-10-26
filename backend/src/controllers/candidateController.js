@@ -1,6 +1,7 @@
 const supabase = require("../config/supabase");
+const pdf = require("pdf-parse");
 
-const { getMatchScore } = require("../services/claudeService");
+const { getMatchScore, parseResume } = require("../services/claudeService");
 
 const createCandidateApplication = async (req, res) => {
   console.log('🔵 APPLICATION SUBMISSION RECEIVED!');
@@ -24,6 +25,24 @@ const createCandidateApplication = async (req, res) => {
       .select("*")
       .eq("email", email)
       .maybeSingle();
+
+    // If candidate exists, check for duplicate application FIRST
+    if (existingCandidate) {
+      const { data: existingApplication } = await supabase
+        .from("applications")
+        .select("id")
+        .eq("candidate_id", existingCandidate.id)
+        .eq("job_id", job_id)
+        .maybeSingle();
+
+      if (existingApplication) {
+        console.log('⚠️ Duplicate application detected');
+        return res.status(409).json({ 
+          error: "You have already applied for this job.",
+          application_id: existingApplication.id 
+        });
+      }
+    }
 
     let candidate;
     if (existingCandidate) {
@@ -227,9 +246,90 @@ const getCandidateMatch = async (req, res) => {
   }
 };
 
+const parseResumeText = async (req, res) => {
+  console.log('📄 RESUME PARSING REQUEST RECEIVED!');
+  
+  const { resumeText } = req.body;
+
+  if (!resumeText || resumeText.trim().length === 0) {
+    return res.status(400).json({ error: 'Resume text is required' });
+  }
+
+  try {
+    console.log('📝 Resume text length:', resumeText.length, 'characters');
+    
+    // Use Claude to parse the resume
+    const parsedData = await parseResume(resumeText);
+    
+    console.log('✅ Resume parsed successfully');
+    res.status(200).json(parsedData);
+  } catch (error) {
+    console.error('❌ Error parsing resume:', error.message);
+    res.status(500).json({ error: 'Failed to parse resume: ' + error.message });
+  }
+};
+
+const parseResumeFile = async (req, res) => {
+  console.log('📎 RESUME FILE UPLOAD RECEIVED!');
+  
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  try {
+    const file = req.file;
+    console.log('📄 File info:', {
+      name: file.originalname,
+      type: file.mimetype,
+      size: file.size,
+    });
+
+    let resumeText = '';
+
+    // Extract text based on file type
+    if (file.mimetype === 'application/pdf') {
+      // Parse PDF
+      const pdfData = await pdf(file.buffer);
+      resumeText = pdfData.text;
+      console.log('📄 Extracted text from PDF:', resumeText.substring(0, 200) + '...');
+    } else if (file.mimetype === 'text/plain') {
+      // Plain text file
+      resumeText = file.buffer.toString('utf-8');
+      console.log('📄 Text file content:', resumeText.substring(0, 200) + '...');
+    } else if (
+      file.mimetype === 'application/msword' || 
+      file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
+      // For DOC/DOCX, we'd need additional libraries (mammoth, etc.)
+      // For now, return error message
+      return res.status(400).json({ 
+        error: 'DOC/DOCX files are not yet supported. Please upload PDF or TXT files.',
+        suggestion: 'You can convert your resume to PDF and try again.'
+      });
+    }
+
+    if (!resumeText || resumeText.trim().length === 0) {
+      return res.status(400).json({ error: 'Could not extract text from file' });
+    }
+
+    console.log('📝 Resume text length:', resumeText.length, 'characters');
+    
+    // Use Claude to parse the resume
+    const parsedData = await parseResume(resumeText);
+    
+    console.log('✅ Resume file parsed successfully');
+    res.status(200).json(parsedData);
+  } catch (error) {
+    console.error('❌ Error parsing resume file:', error.message);
+    res.status(500).json({ error: 'Failed to parse resume file: ' + error.message });
+  }
+};
+
 module.exports = {
   createCandidateApplication,
   getAllCandidates,
   getCandidateById,
   getCandidateMatch,
+  parseResumeText,
+  parseResumeFile,
 };

@@ -11,9 +11,11 @@ const JobPostForm = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
+    company: '',
     description: '',
     pay: '',
     location: '',
+    job_type: 'Full-time',
     schedule: '',
     requirements: '',
     language: 'en',
@@ -38,9 +40,11 @@ const JobPostForm = () => {
       
       setFormData({
         title: job.title || '',
+        company: job.company || '',
         description: job.description || '',
         pay: job.pay || '',
         location: job.location || '',
+        job_type: job.job_type || 'Full-time',
         schedule: job.schedule || '',
         requirements: requirementsText,
         language: job.language || 'en',
@@ -123,6 +127,23 @@ const JobPostForm = () => {
             />
           </div>
 
+          {/* Company Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Briefcase size={16} className="inline mr-1" />
+              Company Name *
+            </label>
+            <input
+              type="text"
+              name="company"
+              value={formData.company}
+              onChange={handleChange}
+              required
+              placeholder="e.g., ABC Logistics"
+              className="input-field"
+            />
+          </div>
+
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -177,21 +198,43 @@ const JobPostForm = () => {
             </div>
           </div>
 
-          {/* Schedule */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Clock size={16} className="inline mr-1" />
-              Schedule *
-            </label>
-            <input
-              type="text"
-              name="schedule"
-              value={formData.schedule}
-              onChange={handleChange}
-              required
-              placeholder="e.g., Monday-Friday, 8am-5pm"
-              className="input-field"
-            />
+          {/* Job Type and Schedule Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Briefcase size={16} className="inline mr-1" />
+                Job Type *
+              </label>
+              <select
+                name="job_type"
+                value={formData.job_type}
+                onChange={handleChange}
+                required
+                className="input-field"
+              >
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Temporary">Temporary</option>
+                <option value="Seasonal">Seasonal</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Clock size={16} className="inline mr-1" />
+                Schedule *
+              </label>
+              <input
+                type="text"
+                name="schedule"
+                value={formData.schedule}
+                onChange={handleChange}
+                required
+                placeholder="e.g., Monday-Friday, 8am-5pm"
+                className="input-field"
+              />
+            </div>
           </div>
 
           {/* Requirements */}

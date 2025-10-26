@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { candidatesAPI } from '../../services/api';
 import Button from '../shared/Button';
-import { User, Mail, Phone, Award, FileText, Languages } from 'lucide-react';
+import { User, Mail, Phone, Award, FileText, Languages, Upload, Loader } from 'lucide-react';
 
 const ApplicationForm = ({ jobId }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [parsingResume, setParsingResume] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,6 +22,66 @@ const ApplicationForm = ({ jobId }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file type
+    const validTypes = ['application/pdf', 'text/plain'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a PDF or TXT file. DOC/DOCX support coming soon!');
+      return;
+    }
+
+    // Check file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    setParsingResume(true);
+
+    try {
+      // Create FormData to send file
+      const formData = new FormData();
+      formData.append('resume', file);
+      
+      // Send to backend for parsing
+      const response = await fetch('http://localhost:5000/api/candidates/parse-resume-file', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to parse resume');
+      }
+
+      const parsedData = await response.json();
+      console.log('Parsed resume data:', parsedData);
+
+      // Auto-populate form fields
+      setFormData(prev => ({
+        ...prev,
+        name: parsedData.name || prev.name,
+        email: parsedData.email || prev.email,
+        phone: parsedData.phone || prev.phone,
+        skills: parsedData.skills?.join('\n') || prev.skills,
+        experience_years: parsedData.experience_years?.toString() || prev.experience_years,
+        certifications: parsedData.certifications?.join('\n') || prev.certifications,
+      }));
+
+      alert('✅ Resume parsed successfully! Please review and edit the auto-filled information.');
+    } catch (error) {
+      console.error('Error parsing resume:', error);
+      alert('❌ ' + error.message + '\n\nPlease fill out the form manually.');
+    } finally {
+      setParsingResume(false);
+      // Reset file input
+      e.target.value = '';
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -58,7 +119,15 @@ const ApplicationForm = ({ jobId }) => {
       navigate('/apply/success');
     } catch (error) {
       console.error('Error submitting application:', error);
-      alert('Failed to submit application. Please try again.');
+      
+      // Handle specific error cases
+      if (error.response?.status === 409) {
+        alert('⚠️ You have already applied for this job.\n\nYou can only submit one application per job position.');
+      } else if (error.response?.data?.error) {
+        alert('Error: ' + error.response.data.error);
+      } else {
+        alert('Failed to submit application. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -213,6 +282,58 @@ const ApplicationForm = ({ jobId }) => {
                 placeholder="https://drive.google.com/your-resume"
                 className="input-field"
               />
+            </div>
+          </div>
+
+          {/* Resume Upload */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+              Resume
+            </h3>
+
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-300 rounded-lg p-6">
+              <div className="text-center">
+                <Upload className="mx-auto text-blue-500 mb-3" size={48} />
+                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                  Upload Your Resume
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Our AI will automatically extract your information and fill out the form for you!
+                </p>
+                
+                <div className="flex items-center justify-center">
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept=".pdf,.txt"
+                      onChange={handleFileUpload}
+                      disabled={parsingResume}
+                      className="hidden"
+                    />
+                    <div className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors inline-flex items-center space-x-2">
+                      {parsingResume ? (
+                        <>
+                          <Loader className="animate-spin" size={20} />
+                          <span>Parsing Resume...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={20} />
+                          <span>Choose File</span>
+                        </>
+                      )}
+                    </div>
+                  </label>
+                </div>
+                
+                <p className="text-xs text-gray-500 mt-3">
+                  Supported formats: PDF, TXT (Max 5MB)
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center text-sm text-gray-500">
+              <span>Or fill out the form manually below</span>
             </div>
           </div>
 

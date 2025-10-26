@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { jobsAPI } from '../services/api';
 import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
-import { Briefcase, MapPin, DollarSign, Clock, Award, Search, TrendingUp } from 'lucide-react';
+import { Briefcase, MapPin, DollarSign, Clock, Award, Search, TrendingUp, Upload, Loader } from 'lucide-react';
 
 const JobMatcher = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [parsingResume, setParsingResume] = useState(false);
   const [matchedJobs, setMatchedJobs] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,6 +36,60 @@ const JobMatcher = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!['application/pdf', 'text/plain'].includes(file.type)) {
+      alert('Please upload a PDF or TXT file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    setParsingResume(true);
+
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('resume', file);
+      
+      const response = await fetch('http://localhost:5000/api/candidates/parse-resume-file', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to parse resume');
+      }
+
+      const parsedData = await response.json();
+      console.log('Parsed resume data:', parsedData);
+
+      setFormData(prev => ({
+        ...prev,
+        name: parsedData.name || prev.name,
+        email: parsedData.email || prev.email,
+        phone: parsedData.phone || prev.phone,
+        skills: parsedData.skills?.join(', ') || prev.skills,
+        experience_years: parsedData.experience_years?.toString() || prev.experience_years,
+        certifications: parsedData.certifications?.join(', ') || prev.certifications,
+        education: parsedData.education || prev.education,
+      }));
+
+      alert('✅ Resume parsed successfully! Please review the auto-filled information.');
+    } catch (error) {
+      console.error('Error parsing resume:', error);
+      alert('❌ ' + error.message);
+    } finally {
+      setParsingResume(false);
+      e.target.value = '';
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -51,15 +106,44 @@ const JobMatcher = () => {
         .filter(s => s);
 
       // Match jobs based on criteria
+      // SCORING BREAKDOWN (Total: 120 points, capped at 100%):
+      // - Schedule: 30 points (Full-time, Part-time, etc.)
+      // - Skills: 30 points (5 points per matching skill, up to 6 skills)
+      // - Pay: 25 points (15 if exceeds minimum only)
+      // - Location: 20 points
+      // - Field: 15 points
       const matches = activeJobs.map(job => {
         let score = 0;
         const reasons = [];
 
-        // Schedule match (30 points)
-        if (formData.schedule && job.schedule) {
-          if (job.schedule.toLowerCase().includes(formData.schedule.toLowerCase())) {
-            score += 30;
-            reasons.push(`${job.schedule} schedule matches your preference`);
+        // Schedule match (30 points) - HIGH PRIORITY
+        // Check both job_type (Full-time/Part-time) and schedule fields
+        if (formData.schedule) {
+          const candidateSchedule = formData.schedule.toLowerCase().trim();
+          
+          // Check job_type field first (Full-time, Part-time, etc.)
+          if (job.job_type) {
+            const jobType = job.job_type.toLowerCase().trim();
+            if (jobType === candidateSchedule || 
+                jobType.includes(candidateSchedule) || 
+                candidateSchedule.includes(jobType)) {
+              score += 30;
+              reasons.push(`✓ Job Type: ${job.job_type} matches your ${formData.schedule} preference`);
+              console.log(`✓ Job Type match for ${job.title}: "${job.job_type}" matches "${formData.schedule}"`);
+            }
+          }
+          // Also check schedule field for backward compatibility
+          else if (job.schedule) {
+            const jobSchedule = job.schedule.toLowerCase().trim();
+            if (jobSchedule === candidateSchedule || 
+                jobSchedule.includes(candidateSchedule) || 
+                candidateSchedule.includes(jobSchedule)) {
+              score += 30;
+              reasons.push(`✓ Schedule: ${job.schedule} matches your ${formData.schedule} preference`);
+              console.log(`✓ Schedule match for ${job.title}: "${job.schedule}" matches "${formData.schedule}"`);
+            } else {
+              console.log(`✗ Schedule NO match for ${job.title}: "${job.schedule}" vs "${formData.schedule}"`);
+            }
           }
         }
 
@@ -71,10 +155,10 @@ const JobMatcher = () => {
           
           if (jobPay >= minPay && jobPay <= maxPay) {
             score += 25;
-            reasons.push(`$${job.pay}/hr is within your pay range`);
+            reasons.push(`✓ Pay: $${job.pay}/hr is within your $${minPay}-$${maxPay} range`);
           } else if (jobPay >= minPay) {
             score += 15;
-            reasons.push(`$${job.pay}/hr exceeds your minimum`);
+            reasons.push(`✓ Pay: $${job.pay}/hr exceeds your minimum of $${minPay}`);
           }
         }
 
@@ -82,7 +166,7 @@ const JobMatcher = () => {
         if (formData.location && job.location) {
           if (job.location.toLowerCase().includes(formData.location.toLowerCase())) {
             score += 20;
-            reasons.push(`Located in ${job.location}`);
+            reasons.push(`✓ Location: ${job.location} matches your preference`);
           }
         }
 
@@ -91,11 +175,11 @@ const JobMatcher = () => {
           if (job.title.toLowerCase().includes(formData.preferredField.toLowerCase()) ||
               job.description?.toLowerCase().includes(formData.preferredField.toLowerCase())) {
             score += 15;
-            reasons.push(`Matches your preferred field: ${formData.preferredField}`);
+            reasons.push(`✓ Field: Matches your preferred field (${formData.preferredField})`);
           }
         }
 
-        // Skills match (10 points)
+        // Skills match (30 points)
         if (candidateSkills.length > 0) {
           // Extract skills from job description and requirements text
           const jobText = `${job.description || ''} ${job.requirements || ''}`.toLowerCase();
@@ -108,7 +192,7 @@ const JobMatcher = () => {
             // Give more points for more matching skills
             const skillPoints = Math.min(matchingSkills.length * 5, 30); // Up to 30 points for skills
             score += skillPoints;
-            reasons.push(`${matchingSkills.length} skill(s) match: ${matchingSkills.join(', ')}`);
+            reasons.push(`✓ Skills: ${matchingSkills.length} match (${matchingSkills.join(', ')})`);
           }
         }
 
@@ -283,6 +367,48 @@ const JobMatcher = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Resume Upload */}
+          <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-dashed border-purple-300 rounded-lg p-6">
+            <div className="text-center">
+              <Upload className="mx-auto text-purple-500 mb-3" size={48} />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Upload Your Resume (Optional)
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Let AI auto-fill your information from your resume!
+              </p>
+              
+              <div className="flex items-center justify-center">
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept=".pdf,.txt"
+                    onChange={handleFileUpload}
+                    disabled={parsingResume}
+                    className="hidden"
+                  />
+                  <div className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors inline-flex items-center space-x-2">
+                    {parsingResume ? (
+                      <>
+                        <Loader className="animate-spin" size={20} />
+                        <span>Parsing Resume...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload size={20} />
+                        <span>Upload Resume</span>
+                      </>
+                    )}
+                  </div>
+                </label>
+              </div>
+              
+              <p className="text-xs text-gray-500 mt-3">
+                PDF or TXT • Max 5MB • Or fill manually below
+              </p>
+            </div>
+          </div>
+
           {/* Personal Information */}
           <div>
             <h2 className="text-xl font-bold text-gray-900 mb-4">Your Information</h2>

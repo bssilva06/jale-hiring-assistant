@@ -166,6 +166,12 @@ const ActiveJobs = () => {
                     <MapPin size={16} className="mr-2" />
                     <span>{job.location}</span>
                   </div>
+                  {job.job_type && (
+                    <div className="flex items-center">
+                      <Briefcase size={16} className="mr-2" />
+                      <span className="font-medium">{job.job_type}</span>
+                    </div>
+                  )}
                   <div className="flex items-center">
                     <Clock size={16} className="mr-2" />
                     <span>{job.schedule}</span>
