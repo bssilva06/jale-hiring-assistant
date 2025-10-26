@@ -1,312 +1,263 @@
-# 🚀 Quick Start - Run the Frontend
+# Quick Start Guide
 
-## ⚡ Super Quick Start (3 Steps)
+This guide provides step-by-step instructions for running the Jale AI Hiring Assistant locally.
 
-### Step 1: Configure Environment
+## Prerequisites
+
+- Node.js 18+ and npm
+- Supabase account ([sign up free](https://supabase.com))
+- Anthropic API key ([get here](https://console.anthropic.com))
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/bssilva06/jale-hiring-assistant.git
+cd jale-hiring-assistant
+```
+
+### 2. Frontend Setup
 
 ```bash
 cd frontend
+npm install
 ```
 
-Edit `.env.local` with your credentials:
+Create a `.env.local` file in the frontend directory:
 
 ```env
-REACT_APP_SUPABASE_URL=your-supabase-url-here
-REACT_APP_SUPABASE_ANON_KEY=your-supabase-anon-key-here
+REACT_APP_SUPABASE_URL=your-supabase-url
+REACT_APP_SUPABASE_ANON_KEY=your-supabase-anon-key
 REACT_APP_API_URL=http://localhost:5000
 ```
 
-### Step 2: Install Dependencies
+### 3. Backend Setup
 
 ```bash
+cd ../backend
 npm install
 ```
 
-### Step 3: Start the App
+Create a `.env` file in the backend directory:
 
-```bash
-npm start
+```env
+PORT=5000
+SUPABASE_URL=your-supabase-url
+SUPABASE_SERVICE_KEY=your-supabase-service-key
+ANTHROPIC_API_KEY=your-claude-api-key
+N8N_WEBHOOK_URL=your-n8n-webhook-url
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
 ```
 
-✅ App will open at `http://localhost:3000`
+## Running the Application
 
----
+### Start the Backend
 
-## 📋 Pre-Flight Checklist
+```bash
+cd backend
+npm run dev
+```
 
-Before running, make sure:
+The backend server will run at `http://localhost:5000`
 
-- [ ] **Node.js installed** (v16+)
+### Start the Frontend
 
-  ```bash
-  node --version
-  ```
-
-- [ ] **Backend is running** (or ready to mock)
-
-  ```bash
-  # In another terminal
-  cd backend
-  npm run dev
-  ```
-
-- [ ] **Environment variables set** in `.env.local`
-
-- [ ] **Supabase project created** (if using real data)
-
----
-
-## 🔧 Troubleshooting
-
-### "Cannot find module 'react'"
+In a separate terminal:
 
 ```bash
 cd frontend
-npm install
-```
-
-### "Port 3000 is already in use"
-
-```bash
-# Kill the process or change port
-PORT=3001 npm start
-```
-
-### "CORS error" in browser console
-
-Your backend needs CORS enabled:
-
-```javascript
-// backend/src/server.js
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
-```
-
-### Tailwind styles not showing
-
-```bash
-# Restart the dev server
-# Press Ctrl+C, then:
 npm start
 ```
 
-### "Network Error" when calling API
+The frontend application will open at `http://localhost:3000`
 
-- Check backend is running: `http://localhost:5000/health`
-- Verify `REACT_APP_API_URL` in `.env.local`
+### Optional: Run n8n Workflows
 
----
+In a third terminal:
 
-## 🧪 Test Without Backend
+```bash
+npx n8n
+```
 
-You can test the UI without a backend by:
+n8n will be accessible at `http://localhost:5678`
 
-1. Comment out API calls temporarily
-2. Use mock data in components
-3. Test navigation and UI interactions
+## Available Routes
 
-Example mock:
+### Employer Portal
+
+- `/dashboard` - Main dashboard with stats and metrics
+- `/jobs/new` - Create new job posting
+- `/jobs` - View all active jobs
+- `/candidates` - Browse candidate applications
+- `/interviews` - Manage scheduled interviews
+- `/interviews/room/:id` - Video interview room
+
+### Candidate Portal
+
+- `/apply` - Browse available jobs
+- `/apply/:jobId` - Apply to specific job
+- `/matcher` - AI-powered job matching tool
+
+## Troubleshooting
+
+### Port Already in Use
+
+If port 3000 is in use:
+
+```bash
+PORT=3001 npm start
+```
+
+### Missing Dependencies
+
+```bash
+npm install
+```
+
+### CORS Errors
+
+Ensure the backend has CORS configured for `http://localhost:3000`:
 
 ```javascript
-// In Dashboard.jsx, temporarily replace:
+// backend/src/server.js
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
+```
+
+### API Connection Issues
+
+1. Verify backend is running at `http://localhost:5000/health`
+2. Check `REACT_APP_API_URL` in frontend `.env.local`
+3. Review browser console for error messages
+
+### Tailwind Styles Not Loading
+
+Restart the development server:
+
+```bash
+# Press Ctrl+C to stop, then:
+npm start
+```
+
+## Testing Without Full Backend
+
+The frontend can be tested independently by using mock data:
+
+```javascript
+// Example: Mock data in Dashboard.jsx
 const fetchDashboardData = async () => {
-  // Mock data for testing
   setStats({
     totalJobs: 5,
     totalApplications: 12,
     interviewsScheduled: 3,
-    hired: 2,
+    hired: 2
   });
   setLoading(false);
 };
 ```
 
----
+## Mobile Testing
 
-## 📱 View on Mobile
+### Local Network Testing
 
-### Using Same Network
-
-1. Find your computer's IP:
-
+1. Find the local IP address:
    ```bash
    # Windows
    ipconfig
-   # Look for IPv4 Address
+
+   # macOS/Linux
+   ifconfig
    ```
 
-2. On your phone, visit:
+2. Access from mobile device:
    ```
    http://YOUR-IP-ADDRESS:3000
    ```
 
-### Using Chrome DevTools
+### Browser DevTools
 
 1. Open browser DevTools (F12)
-2. Click "Toggle device toolbar" (Ctrl+Shift+M)
-3. Select mobile device to test
+2. Toggle device toolbar (Ctrl+Shift+M or Cmd+Shift+M)
+3. Select a mobile device profile
 
----
+## Key Dependencies
 
-## 🎯 Available Routes
+The project uses the following major dependencies:
 
-Once running, you can navigate to:
+**Frontend:**
+- React 19.2.0
+- React Router 7.9.4
+- Tailwind CSS 3
+- Axios 1.12.2
+- Supabase JS 2.76.1
+- Jitsi React SDK 1.4.4
+- React Hook Form 7.65.0
+- Zod 4.1.12
 
-### Candidate Portal
+**Backend:**
+- Express.js
+- Supabase SDK 2.45.4
+- Anthropic Claude SDK
+- Nodemailer
+- Multer 2.0.2
+- pdf-parse 1.1.1
+- node-cron
 
-- `http://localhost:3000/apply` - Main application page
-- `http://localhost:3000/apply/[job-id]` - Apply to specific job
+## NPM Scripts
 
-### Hiring Manager
-
-- `http://localhost:3000/dashboard` - Main dashboard
-- `http://localhost:3000/jobs/new` - Post new job
-- `http://localhost:3000/candidates` - View candidates
-- `http://localhost:3000/interviews` - Manage interviews
-
----
-
-## 📦 What Gets Installed
-
-Running `npm install` will install:
-
-- **react** (19.2.0) - UI framework
-- **react-router-dom** - Navigation
-- **tailwindcss** - Styling
-- **axios** - API requests
-- **@supabase/supabase-js** - Database
-- **@jitsi/react-sdk** - Video calls
-- **lucide-react** - Icons
-- **date-fns** - Date formatting
-- **react-hook-form** - Form handling
-- **zod** - Validation
-
-Total size: ~500MB (with node_modules)
-
----
-
-## 🎨 Available NPM Scripts
+### Frontend
 
 ```bash
-# Start development server
-npm start
-
-# Build for production
-npm run build
-
-# Run tests (if configured)
-npm test
-
-# Eject from Create React App (don't do this unless necessary!)
-npm run eject
+npm start       # Start development server
+npm run build   # Build for production
+npm test        # Run tests
 ```
 
----
+### Backend
 
-## 🔥 Hot Tips
+```bash
+npm run dev     # Start development server with nodemon
+npm start       # Start production server
+```
 
-### 1. Auto-Reload
+## Development Tips
 
-Changes to files will automatically reload the browser!
+### Auto-Reload
 
-### 2. Browser Console
+Both frontend and backend support hot-reload during development. File changes will automatically trigger a reload.
 
-Press **F12** to see:
+### React DevTools
 
-- Network requests
-- Console logs
-- React DevTools
+Install the React Developer Tools extension:
+- [Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
+- [Firefox](https://addons.mozilla.org/en-US/firefox/addon/react-devtools/)
 
-### 3. React DevTools
+### Clean Installation
 
-Install browser extension:
-
-- Chrome: [React Developer Tools](https://chrome.google.com/webstore)
-- Firefox: [React Developer Tools](https://addons.mozilla.org)
-
-### 4. Clean Install
-
-If things break:
+If experiencing dependency issues:
 
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
----
+## Additional Resources
 
-## 🎬 Demo Preparation
+- [Setup Guide](docs/SETUP.md) - Detailed configuration instructions
+- [API Documentation](docs/API.md) - Complete API reference
+- [Architecture](docs/ARCHITECTURE.md) - System architecture overview
+- [Component Showcase](COMPONENT_SHOWCASE.md) - Visual component guide
 
-### Before Demo Day:
+## Support
 
-1. **Test all flows** (at least 3 times!)
-2. **Prepare mock data** in database
-3. **Test on mobile** device
-4. **Check video** works (Jitsi)
-5. **Have backup** screenshots
-
-### Mock Data to Prepare:
-
-- 3-5 job postings
-- 10-15 candidate applications
-- Mix of match scores (high, medium, low)
-- 2-3 scheduled interviews
-- At least 1 "hired" candidate
-
-### Quick Test Checklist:
-
-- [ ] Post a job
-- [ ] Submit application
-- [ ] Open chatbot (ask question)
-- [ ] View candidates list
-- [ ] Filter by match score
-- [ ] Schedule interview
-- [ ] Join video call
-- [ ] Submit feedback
-
----
-
-## 📞 Need Help?
-
-### Check These First:
-
-1. Console errors (F12)
-2. Network tab (see API requests)
-3. `.env.local` file is correct
-4. Backend is running
-
-### Common Issues:
-
-- **Blank screen** → Check browser console
-- **Styles broken** → Restart dev server
-- **API errors** → Verify backend URL
-- **Module errors** → Run `npm install`
-
----
-
-## 🎉 You're Ready!
-
-Everything is set up and ready to go. Just run:
-
-```bash
-cd frontend
-npm install
-npm start
-```
-
-**Good luck with your demo!** 🚀✨
-
----
-
-## 📚 More Resources
-
-- `FRONTEND_README.md` - Detailed setup guide
-- `FRONTEND_COMPLETE.md` - Full feature overview
-- `COMPONENT_SHOWCASE.md` - Visual component guide
-- `BACKEND_API_REQUIREMENTS.md` - API specs for backend teammate
-
-**Questions?** Check these files or the code comments! 💡
+For issues or questions:
+- Check the [troubleshooting section](#troubleshooting)
+- Review browser console logs (F12)
+- Verify environment variables are correctly configured
+- Ensure all required services (Supabase, backend) are running

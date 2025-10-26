@@ -1,14 +1,18 @@
-# 🎨 Frontend Component Showcase
+# Component Documentation
 
-## Visual Guide to All Components
+Visual reference guide for all UI components in the Jale AI Hiring Assistant frontend.
 
-### 🏠 Pages
+## Page Components
 
-#### 1. Dashboard (`/dashboard`)
+### Dashboard
+
+Location: `src/pages/Dashboard.jsx`
+
+The employer dashboard provides an overview of hiring metrics and recent activity.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ 📊 Hiring Dashboard                     [Post New Job] │
+│ Hiring Dashboard                        [Post New Job] │
 ├─────────────────────────────────────────────────────────┤
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐│
 │  │ Active   │  │  Total   │  │Interview │  │ Hired   ││
@@ -17,19 +21,29 @@
 ├─────────────────────────────────────────────────────────┤
 │  Recent Applications          │  Active Jobs           │
 │  ┌─────────────────────────┐  │  • Warehouse Associate │
-│  │ 👤 John Doe             │  │  • Delivery Driver     │
-│  │ 85% Match ✅            │  │  • Forklift Operator   │
+│  │ John Doe                │  │  • Delivery Driver     │
+│  │ 85% Match               │  │  • Forklift Operator   │
 │  │ john@example.com        │  │                        │
 │  │ [Schedule] [View]       │  │  [View All Jobs]       │
 │  └─────────────────────────┘  │                        │
 └─────────────────────────────────────────────────────────┘
 ```
 
-#### 2. Job Posting (`/jobs/new`)
+**Features:**
+- Real-time statistics cards
+- Recent applications list
+- Active jobs overview
+- Quick action buttons
+
+### Job Posting
+
+Location: `src/pages/JobPosting.jsx`
+
+Form for creating and editing job postings.
 
 ```
 ┌─────────────────────────────────────────┐
-│ 💼 Post a New Job                       │
+│ Post a New Job                          │
 ├─────────────────────────────────────────┤
 │ Job Title *                             │
 │ [Warehouse Associate.................]  │
@@ -54,12 +68,22 @@
 └─────────────────────────────────────────┘
 ```
 
-#### 3. Candidate Portal (`/apply/:jobId`)
+**Fields:**
+- Job title, company name, description
+- Pay rate, location, schedule
+- Requirements (multi-line)
+- Job type and language selection
+
+### Candidate Portal
+
+Location: `src/pages/CandidatePortal.jsx`
+
+Job viewing and application interface for candidates.
 
 ```
 ┌─────────────────────────────────────────────────┐
 │ Warehouse Associate                             │
-│ 💵 $18.50/hr  📍 Miami, FL  ⏰ Mon-Fri, 8-5    │
+│ $18.50/hr  Miami, FL  Mon-Fri, 8-5             │
 ├─────────────────────────────────────────────────┤
 │ We are looking for an experienced warehouse     │
 │ worker to join our team...                      │
@@ -68,7 +92,7 @@
 │ ✓ Forklift certification                       │
 │ ✓ 2+ years warehouse experience                │
 ├─────────────────────────────────────────────────┤
-│ 📝 Apply for Position                           │
+│ Apply for Position                              │
 │                                                 │
 │ Full Name *                                     │
 │ [John Doe...........................]           │
@@ -83,18 +107,27 @@
 │ [Submit Application]  [Cancel]                  │
 ├─────────────────────────────────────────────────┤
 │                           ┌────────────────────┐│
-│                           │ 💬 Chat with AI    ││ ← Floating button
+│                           │ Chat with AI       ││
 │                           └────────────────────┘│
 └─────────────────────────────────────────────────┘
 ```
 
-#### 4. Interview Room (`/interviews/room/:id`)
+**Features:**
+- Job details display
+- Application form
+- Floating chatbot button
+
+### Interview Room
+
+Location: `src/pages/InterviewRoom.jsx`
+
+Video interview interface with Jitsi integration.
 
 ```
 ┌────────────────────────────────────────────────────┐
 │  ╔════════════════════════╗  │ Candidate Info     │
 │  ║                        ║  │                    │
-│  ║   📹 JITSI VIDEO       ║  │ John Doe           │
+│  ║   JITSI VIDEO          ║  │ John Doe           │
 │  ║   CONFERENCE AREA      ║  │ Warehouse Assoc.   │
 │  ║                        ║  │                    │
 │  ║   [Mute] [Video] [End] ║  │ Match: 85%         │
@@ -102,7 +135,7 @@
 │                               │ Strengths:         │
 │  Interview Feedback           │ • Forklift cert    │
 │  Decision:                    │ • 3+ years exp     │
-│  [✓ Hire] [? Maybe] [✗ Reject]│                    │
+│  [Hire] [Maybe] [Reject]      │                    │
 │                               │ [End Interview]    │
 │  Rating: ⭐⭐⭐⭐⭐           │                    │
 │                               │                    │
@@ -113,110 +146,176 @@
 └────────────────────────────────────────────────────┘
 ```
 
----
+**Features:**
+- Embedded Jitsi video conference
+- Candidate information sidebar
+- Interview feedback form
+- Hiring decision buttons
+- Rating system
+- Notes section
 
-### 🧩 Shared Components
+## Shared Components
 
-#### Button Component
+### Button Component
 
+Location: `src/components/shared/Button.jsx`
+
+Reusable button with multiple variants.
+
+**Variants:**
+```
+[Primary]  [Secondary]  [Success]  [Danger]  [Outline]
+  Blue       Gray         Green      Red      Bordered
+```
+
+**Usage:**
 ```jsx
-<Button variant="primary">Click Me</Button>
-<Button variant="secondary">Cancel</Button>
-<Button variant="success">Hire</Button>
-<Button variant="danger">Reject</Button>
-<Button variant="outline">View</Button>
+<Button variant="primary" onClick={handleClick}>
+  Click Me
+</Button>
 ```
 
-Visual:
+**Props:**
+- `variant`: 'primary' | 'secondary' | 'success' | 'danger' | 'outline'
+- `onClick`: Click handler
+- `disabled`: Boolean
+- `type`: 'button' | 'submit'
+- `children`: Button text/content
 
-```
-[Click Me]  [Cancel]  [Hire]  [Reject]  [View]
-  Blue      Gray      Green    Red      Outlined
-```
+### Card Component
 
-#### Card Component
+Location: `src/components/shared/Card.jsx`
 
-```jsx
-<Card hoverable>
-  <h3>Candidate Name</h3>
-  <p>Details...</p>
-</Card>
-```
-
-Visual:
+Container component with optional hover effects.
 
 ```
 ┌─────────────────────┐
-│ Candidate Name      │
-│ Details...          │
+│ Card Title          │
+│ Card content goes   │
+│ here...             │
 │                     │
 └─────────────────────┘
-(Hover for shadow effect)
 ```
 
-#### Modal Component
-
+**Usage:**
 ```jsx
-<Modal isOpen={true} title="Confirmation">
+<Card hoverable>
+  <h3>Title</h3>
+  <p>Content</p>
+</Card>
+```
+
+**Props:**
+- `hoverable`: Enable hover shadow effect
+- `onClick`: Optional click handler
+- `className`: Additional CSS classes
+
+### Modal Component
+
+Location: `src/components/shared/Modal.jsx`
+
+Dialog overlay for confirmations and forms.
+
+```
+    ┌─────────────────────────┐
+    │ Modal Title         [×] │
+    ├─────────────────────────┤
+    │ Modal content...        │
+    │                         │
+    │ [Confirm]  [Cancel]     │
+    └─────────────────────────┘
+```
+
+**Usage:**
+```jsx
+<Modal isOpen={isOpen} onClose={handleClose} title="Confirm">
   <p>Are you sure?</p>
 </Modal>
 ```
 
-Visual:
+**Props:**
+- `isOpen`: Boolean to control visibility
+- `onClose`: Close handler
+- `title`: Modal header text
+- `children`: Modal content
 
+### Badge Component
+
+Color-coded status indicators.
+
+**Match Score Badges:**
 ```
-    ┌─────────────────────────┐
-    │ Confirmation        [×] │
-    ├─────────────────────────┤
-    │ Are you sure?           │
-    │                         │
-    │ [Yes]  [No]             │
-    └─────────────────────────┘
+┌──────────┐  ┌──────────┐  ┌──────────┐
+│85% Match │  │72% Match │  │45% Match │
+│   ✅     │  │   ⚠️     │  │   ❌     │
+└──────────┘  └──────────┘  └──────────┘
+   Green        Yellow         Red
+  (80%+)       (60-79%)       (<60%)
 ```
 
----
+**Status Badges:**
+```
+┌──────────┐  ┌──────────┐  ┌──────────┐
+│Submitted │  │Interview │  │  Hired   │
+└──────────┘  └──────────┘  └──────────┘
+```
 
-### 💼 Hiring Manager Components
+## Employer Components
 
-#### CandidateList
+### CandidateList
+
+Location: `src/components/hiring/CandidateList.jsx`
+
+Displays candidates with filtering and sorting.
 
 ```
 Filter: [All (12)] [Excellent 80%+ (5)] [Good 60-79% (4)] [Poor <60% (3)]
 
 ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
-│ 👤 John Doe    │  │ 👤 Jane Smith  │  │ 👤 Bob Wilson  │
+│ John Doe       │  │ Jane Smith     │  │ Bob Wilson     │
 │ Warehouse Assoc│  │ Delivery Driver│  │ Forklift Op    │
 │                │  │                │  │                │
 │ 85% Match ✅   │  │ 72% Match ⚠️  │  │ 45% Match ❌   │
-│ Submitted 📘   │  │ Interview 📅   │  │ Rejected ❌    │
+│ Submitted      │  │ Interview      │  │ Rejected       │
 │                │  │                │  │                │
-│ 📧 john@...    │  │ 📧 jane@...    │  │ 📧 bob@...     │
-│ 📞 555-0100    │  │ 📞 555-0101    │  │ 📞 555-0102    │
+│ john@email.com │  │ jane@email.com │  │ bob@email.com  │
+│ 555-0100       │  │ 555-0101       │  │ 555-0102       │
 │                │  │                │  │                │
 │ Skills:        │  │ Skills:        │  │ Skills:        │
 │ [Forklift] [+2]│  │ [Driving] [+3] │  │ [Lifting] [+1] │
 │                │  │                │  │                │
-│ [📅 Schedule]  │  │ [👁️ View]      │  │ [👁️ View]      │
+│ [Schedule]     │  │ [View]         │  │ [View]         │
 └────────────────┘  └────────────────┘  └────────────────┘
 ```
 
-#### InterviewScheduler
+**Features:**
+- Match score filtering
+- Status badges
+- Contact information
+- Skills display
+- Action buttons
+
+### InterviewScheduler
+
+Location: `src/components/hiring/InterviewScheduler.jsx`
+
+Interview scheduling form component.
 
 ```
 ┌────────────────────────────────────┐
-│ 📅 Schedule Interview              │
+│ Schedule Interview                 │
 ├────────────────────────────────────┤
 │ Interview Date *                   │
-│ [📅 2025-10-25...............]     │
+│ [2025-10-25...............]        │
 │                                    │
 │ Interview Time *                   │
-│ [⏰ 14:00.................]        │
+│ [14:00.................]           │
 │                                    │
 │ Duration (minutes)                 │
 │ [30 minutes ▼]                     │
 │                                    │
 │ ┌────────────────────────────────┐│
-│ │ 📧 Automatic Reminders:        ││
+│ │ Automatic Reminders:           ││
 │ │ • Confirmation email           ││
 │ │ • 24-hour reminder             ││
 │ │ • 1-hour reminder              ││
@@ -226,40 +325,60 @@ Filter: [All (12)] [Excellent 80%+ (5)] [Good 60-79% (4)] [Poor <60% (3)]
 └────────────────────────────────────┘
 ```
 
----
+**Features:**
+- Date and time pickers
+- Duration selection
+- Automatic reminder notification
+- Jitsi room generation
 
-### 👥 Candidate Components
+### JobPostForm
 
-#### ChatBot (Closed)
+Location: `src/components/hiring/JobPostForm.jsx`
 
+Reusable form for job creation and editing.
+
+**Features:**
+- Form validation with Zod
+- Multi-line requirements input
+- Language selection
+- Job type dropdown
+- Real-time validation feedback
+
+## Candidate Components
+
+### ChatBot
+
+Location: `src/components/candidate/ChatBot.jsx`
+
+Bilingual AI chatbot widget.
+
+**Closed State:**
 ```
                     ┌──────┐
-                    │ 💬   │  ← Floating button
+                    │ 💬   │
                     └──────┘
 ```
 
-#### ChatBot (Open)
-
+**Open State:**
 ```
 ┌─────────────────────────────────┐
-│ 🤖 Jale AI Assistant        [×] │
+│ Jale AI Assistant           [×] │
 │ Ask me anything!                │
 ├─────────────────────────────────┤
 │ ┌─────────────────────────────┐ │
-│ │ 🤖 ¡Hola! Hi! I'm here to  │ │
-│ │    answer your questions... │ │
-│ │    9:00 AM                  │ │
+│ │ ¡Hola! Hi! I'm here to      │ │
+│ │ answer your questions...    │ │
+│ │ 9:00 AM                     │ │
 │ └─────────────────────────────┘ │
 │                                 │
 │             ┌─────────────────┐ │
-│             │ What's the pay? │ 👤│
+│             │ What's the pay? │ │
 │             │ 9:01 AM         │ │
 │             └─────────────────┘ │
 │                                 │
 │ ┌─────────────────────────────┐ │
-│ │ 🤖 This Warehouse Associate │ │
-│ │    position pays $18.50/hr  │ │
-│ │    9:01 AM                  │ │
+│ │ This position pays $18.50/hr│ │
+│ │ 9:01 AM                     │ │
 │ └─────────────────────────────┘ │
 ├─────────────────────────────────┤
 │ Suggested questions:            │
@@ -271,11 +390,22 @@ Filter: [All (12)] [Excellent 80%+ (5)] [Good 60-79% (4)] [Poor <60% (3)]
 └─────────────────────────────────┘
 ```
 
-#### ApplicationForm
+**Features:**
+- Automatic language detection
+- Contextual responses
+- Suggested questions
+- Message history
+- Floating widget positioning
+
+### ApplicationForm
+
+Location: `src/components/candidate/ApplicationForm.jsx`
+
+Job application submission form.
 
 ```
 ┌────────────────────────────────────┐
-│ 📝 Apply for Position              │
+│ Apply for Position                 │
 ├────────────────────────────────────┤
 │ Personal Information               │
 │ ───────────────────────────────    │
@@ -301,54 +431,85 @@ Filter: [All (12)] [Excellent 80%+ (5)] [Good 60-79% (4)] [Poor <60% (3)]
 │ Certifications (optional)          │
 │ [Forklift certified.........]      │
 │                                    │
-│ ┌────────────────────────────────┐│
-│ │ 💬 Have questions? Click chat  ││
-│ │ to ask our AI assistant!       ││
-│ └────────────────────────────────┘│
-│                                    │
 │ [Submit Application]  [Cancel]     │
 └────────────────────────────────────┘
 ```
 
----
+**Features:**
+- Form validation
+- Resume upload option
+- AI auto-fill from resume
+- Duplicate prevention
 
-### 🎨 Design System
+## Layout Components
 
-#### Color Palette
+### Navbar
+
+Location: `src/components/layout/Navbar.jsx`
+
+Top navigation bar.
+
+**Features:**
+- Branding/logo
+- Navigation links
+- User menu (prepared)
+- Mobile hamburger menu
+- Responsive breakpoints
+
+### Sidebar
+
+Location: `src/components/layout/Sidebar.jsx`
+
+Side navigation menu.
+
+**Features:**
+- Role-based menu items
+- Active route highlighting
+- Collapsible on mobile
+- Icon + text labels
+
+## Design System
+
+### Color Palette
 
 ```
-Primary (Blue):    #3B82F6  ■
-Secondary (Green): #10B981  ■
-Accent (Amber):    #F59E0B  ■
+Primary (Blue):    #1B56FD  ■
+Deep Blue:         #0118D8  ■
+Accent (Cream):    #E9DFC3  ■
+Light Background:  #FFF8F8  ■
 Success (Green):   #10B981  ■
 Danger (Red):      #EF4444  ■
 ```
 
-#### Badge Styles
+### Typography
 
-```
-┌──────────┐  ┌──────────┐  ┌──────────┐
-│85% Match │  │72% Match │  │45% Match │
-│   ✅     │  │   ⚠️     │  │   ❌     │
-└──────────┘  └──────────┘  └──────────┘
-   Green        Yellow         Red
-  (80%+)       (60-79%)       (<60%)
+- **Font Family:** Inter
+- **Headings:** 700 (bold)
+- **Body:** 400 (regular)
+- **Buttons:** 500 (medium)
 
-┌──────────┐  ┌──────────┐  ┌──────────┐
-│Submitted │  │Interview │  │  Hired   │
-│    📘    │  │    📅    │  │    ✅    │
-└──────────┘  └──────────┘  └──────────┘
-```
+### Spacing
 
----
+Uses Tailwind spacing scale (4px base):
+- `p-2` = 8px padding
+- `p-4` = 16px padding
+- `p-6` = 24px padding
+- `p-8` = 32px padding
 
-### 📱 Responsive Behavior
+### Shadows
 
-#### Mobile (< 768px)
+- `shadow-sm` - Subtle elevation
+- `shadow-md` - Card elevation
+- `shadow-lg` - Modal/dropdown
+- `shadow-xl` - Prominent elements
+
+## Responsive Behavior
+
+### Mobile (< 768px)
 
 ```
 ┌───────────────┐
-│ ☰ Jale AI [≡] │  ← Hamburger menu
+│ ☰ Jale AI [≡] │
 ├───────────────┤
 │               │
 │  Single       │
@@ -365,7 +526,7 @@ Danger (Red):      #EF4444  ■
 └───────────────┘
 ```
 
-#### Desktop (> 1024px)
+### Desktop (> 1024px)
 
 ```
 ┌────────────────────────────────────┐
@@ -381,26 +542,24 @@ Danger (Red):      #EF4444  ■
 └───┴────────────────────────────────┘
 ```
 
----
+## Component States
 
-### ⚡ Interactive States
-
-#### Loading State
+### Loading State
 
 ```
 ┌─────────────────┐
 │                 │
-│    ◌  ◌  ◌     │  ← Spinning animation
+│    ◌  ◌  ◌     │
 │    Loading...   │
 │                 │
 └─────────────────┘
 ```
 
-#### Empty State
+### Empty State
 
 ```
 ┌─────────────────┐
-│       👤        │  ← Large icon
+│       👤        │
 │                 │
 │ No candidates   │
 │     found       │
@@ -409,7 +568,7 @@ Danger (Red):      #EF4444  ■
 └─────────────────┘
 ```
 
-#### Error State
+### Error State
 
 ```
 ┌─────────────────┐
@@ -420,18 +579,16 @@ Danger (Red):      #EF4444  ■
 └─────────────────┘
 ```
 
----
+## User Flows
 
-## 🎯 Key Interactions
-
-### 1. Candidate Application Flow
+### Candidate Application Flow
 
 ```
-Landing Page → View Job Details → Open Chatbot (ask questions)
-→ Fill Application → Submit → See Success Message
+Landing Page → View Job Details → Open Chatbot (optional)
+→ Fill Application → Submit → Success Message
 ```
 
-### 2. Hiring Manager Flow
+### Hiring Manager Flow
 
 ```
 Dashboard → Post Job → View Applications → Filter by Score
@@ -439,30 +596,81 @@ Dashboard → Post Job → View Applications → Filter by Score
 → Submit Feedback → Update Dashboard
 ```
 
-### 3. Interview Flow
+### Interview Flow
 
 ```
 Interview List → Click Join → Jitsi Loads → Video Call
 → End Call → Feedback Form → Rate & Decide → Submit
 ```
 
----
-
-## 📊 Data Flow
+## Data Flow Architecture
 
 ```
 Frontend Components
        ↓
-   API Service (axios)
+   API Service (Axios)
        ↓
-Backend API (http://localhost:5000)
+Backend API (localhost:5000)
        ↓
    ┌────────┬──────────┐
    ↓        ↓          ↓
-Supabase  Claude   n8n Workflows
-(Database) (AI)    (Automation)
+Supabase  Claude AI  n8n
 ```
 
----
+## Component Best Practices
 
-**All components are ready and fully functional!** 🎉
+### File Organization
+- One component per file
+- Co-locate styles if needed
+- Keep components focused and single-purpose
+
+### Props
+- Use PropTypes or TypeScript
+- Provide default props
+- Document expected props
+
+### State
+- Lift state up when needed
+- Use local state for UI concerns
+- Consider Context for deep prop drilling
+
+### Performance
+- Memoize expensive computations
+- Avoid inline function definitions in render
+- Use React.memo for pure components
+
+## Testing Components
+
+### Recommended Approach
+```javascript
+import { render, screen, fireEvent } from '@testing-library/react';
+import Button from './Button';
+
+test('renders button with text', () => {
+  render(<Button>Click me</Button>);
+  expect(screen.getByText('Click me')).toBeInTheDocument();
+});
+
+test('calls onClick when clicked', () => {
+  const handleClick = jest.fn();
+  render(<Button onClick={handleClick}>Click</Button>);
+  fireEvent.click(screen.getByText('Click'));
+  expect(handleClick).toHaveBeenCalledTimes(1);
+});
+```
+
+## Accessibility Guidelines
+
+- Use semantic HTML elements
+- Provide alt text for images
+- Ensure keyboard navigation
+- Maintain color contrast ratios
+- Add ARIA labels where needed
+- Test with screen readers
+
+## Resources
+
+- [React Component Patterns](https://reactpatterns.com/)
+- [Tailwind UI Components](https://tailwindui.com/)
+- [React Hook Form Examples](https://react-hook-form.com/get-started)
+- [Accessibility Guide](https://www.w3.org/WAI/WCAG21/quickref/)

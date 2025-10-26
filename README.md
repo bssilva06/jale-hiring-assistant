@@ -293,12 +293,14 @@ jale-hiring-assistant/
 
 ## Documentation
 
-| Document                             | Description                             |
-| ------------------------------------ | --------------------------------------- |
-| [Setup Guide](docs/SETUP.md)         | Detailed installation and configuration |
-| [API Documentation](docs/API.md)     | Complete API reference                  |
-| [Architecture](docs/ARCHITECTURE.md) | System design and data flow             |
-| [Demo Script](docs/DEMO_SCRIPT.md)   | Hackathon presentation guide            |
+| Document                                         | Description                             |
+| ------------------------------------------------ | --------------------------------------- |
+| [Quick Start](QUICK_START.md)                    | Get started in 3 steps                  |
+| [Setup Guide](docs/SETUP.md)                     | Detailed installation and configuration |
+| [API Reference](docs/API_REFERENCE.md)           | Complete API documentation              |
+| [Frontend Guide](docs/FRONTEND.md)               | Frontend architecture and components    |
+| [Component Library](docs/COMPONENTS.md)          | Visual component reference              |
+| [Architecture Overview](docs/ARCHITECTURE_MERMAID.md) | System design with diagrams        |
 
 ---
 
