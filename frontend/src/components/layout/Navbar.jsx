@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Briefcase, Menu, Home } from 'lucide-react';
+import LanguageSwitcher from '../shared/LanguageSwitcher';
 
 const Navbar = ({ onMenuClick }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const isHiringManager = location.pathname.startsWith('/dashboard') || 
                           location.pathname.startsWith('/jobs') ||
@@ -31,18 +34,20 @@ const Navbar = ({ onMenuClick }) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden md:flex items-center space-x-3">
+            <LanguageSwitcher />
+
             {isHiringManager ? (
               <>
-                <Link 
-                  to="/dashboard" 
+                <Link
+                  to="/dashboard"
                   className={`font-bold px-4 py-2 rounded-lg transition-all ${
-                    location.pathname === '/dashboard' 
-                      ? 'bg-primary text-white' 
+                    location.pathname === '/dashboard'
+                      ? 'bg-primary text-white'
                       : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link>
                 <Link 
                   to="/jobs/new" 
@@ -52,7 +57,7 @@ const Navbar = ({ onMenuClick }) => {
                       : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
-                  Post Job
+                  {t('nav.postJob')}
                 </Link>
                 <Link 
                   to="/candidates" 
@@ -62,7 +67,7 @@ const Navbar = ({ onMenuClick }) => {
                       : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
-                  Candidates
+                  {t('nav.candidates')}
                 </Link>
                 <Link 
                   to="/interviews" 
@@ -72,12 +77,12 @@ const Navbar = ({ onMenuClick }) => {
                       : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
-                  Interviews
+                  {t('nav.interviews')}
                 </Link>
                 <button
                   onClick={() => navigate('/')}
                   className="text-gray-700 hover:text-primary font-bold transition-colors ml-2"
-                  title="Back to Home"
+                  title={t('nav.backToHome')}
                 >
                   <Home size={24} />
                 </button>
@@ -92,14 +97,14 @@ const Navbar = ({ onMenuClick }) => {
                       : 'text-gray-700 hover:bg-blue-50 hover:text-primary'
                   }`}
                 >
-                  Browse Jobs
+                  {t('nav.browseJobs')}
                 </Link>
                 <button
                   onClick={() => navigate('/')}
                   className="text-gray-700 hover:text-primary font-bold transition-colors flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-blue-50"
                 >
                   <Home size={20} />
-                  <span>Back to Home</span>
+                  <span>{t('nav.backToHome')}</span>
                 </button>
               </>
             ) : null}

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { jobsAPI } from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
 import Button from '../shared/Button';
 import { Briefcase, DollarSign, MapPin, Clock, FileText } from 'lucide-react';
 
 const JobPostForm = () => {
   const navigate = useNavigate();
   const { jobId } = useParams();
+  const toast = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,7 +55,7 @@ const JobPostForm = () => {
       });
     } catch (error) {
       console.error('Error fetching job:', error);
-      alert('Failed to load job details.');
+      toast.error('Failed to load job details.');
       navigate('/jobs');
     }
   };
@@ -82,19 +86,19 @@ const JobPostForm = () => {
         // Update existing job
         const response = await jobsAPI.update(jobId, jobData);
         console.log('Job updated:', response.data);
-        alert('Job updated successfully!');
+        toast.success('Job updated successfully!');
       } else {
         // Create new job
         const response = await jobsAPI.create(jobData);
         console.log('Job created:', response.data);
-        alert('Job posted successfully! Automated outreach will begin shortly.');
+        toast.success('Job posted successfully! Automated outreach will begin shortly.');
       }
-      
+
       // Navigate to dashboard
       navigate('/dashboard');
     } catch (error) {
       console.error(`Error ${isEditing ? 'updating' : 'creating'} job:`, error);
-      alert(`Failed to ${isEditing ? 'update' : 'create'} job. Please try again.`);
+      toast.error(`Failed to ${isEditing ? 'update' : 'create'} job. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -106,7 +110,7 @@ const JobPostForm = () => {
         <div className="flex items-center space-x-3 mb-6">
           <Briefcase className="text-primary" size={32} />
           <h2 className="text-2xl font-bold text-gray-900">
-            {isEditing ? 'Edit Job' : 'Post a New Job'}
+            {isEditing ? t('jobForm.editJob') : t('jobForm.postNewJob')}
           </h2>
         </div>
 
@@ -114,7 +118,7 @@ const JobPostForm = () => {
           {/* Job Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Job Title *
+              {t('jobForm.jobTitle')} *
             </label>
             <input
               type="text"
@@ -122,7 +126,7 @@ const JobPostForm = () => {
               value={formData.title}
               onChange={handleChange}
               required
-              placeholder="e.g., Warehouse Associate"
+              placeholder={t('jobForm.jobTitlePlaceholder')}
               className="input-field"
             />
           </div>
@@ -131,7 +135,7 @@ const JobPostForm = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Briefcase size={16} className="inline mr-1" />
-              Company Name *
+              {t('jobForm.companyName')} *
             </label>
             <input
               type="text"
@@ -139,7 +143,7 @@ const JobPostForm = () => {
               value={formData.company}
               onChange={handleChange}
               required
-              placeholder="e.g., ABC Logistics"
+              placeholder={t('jobForm.companyPlaceholder')}
               className="input-field"
             />
           </div>
@@ -148,7 +152,7 @@ const JobPostForm = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <FileText size={16} className="inline mr-1" />
-              Job Description *
+              {t('jobForm.jobDescription')} *
             </label>
             <textarea
               name="description"
@@ -156,7 +160,7 @@ const JobPostForm = () => {
               onChange={handleChange}
               required
               rows={4}
-              placeholder="Describe the role, responsibilities, and what makes it great..."
+              placeholder={t('jobForm.descriptionPlaceholder')}
               className="input-field"
             />
           </div>
@@ -166,7 +170,7 @@ const JobPostForm = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <DollarSign size={16} className="inline mr-1" />
-                Pay (per hour) *
+                {t('jobForm.pay')} *
               </label>
               <input
                 type="number"
@@ -176,7 +180,7 @@ const JobPostForm = () => {
                 required
                 step="0.01"
                 min="0"
-                placeholder="18.50"
+                placeholder={t('jobForm.payPlaceholder')}
                 className="input-field"
               />
             </div>
@@ -184,7 +188,7 @@ const JobPostForm = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <MapPin size={16} className="inline mr-1" />
-                Location *
+                {t('jobForm.location')} *
               </label>
               <input
                 type="text"
@@ -192,7 +196,7 @@ const JobPostForm = () => {
                 value={formData.location}
                 onChange={handleChange}
                 required
-                placeholder="e.g., Miami, FL"
+                placeholder={t('jobForm.locationPlaceholder')}
                 className="input-field"
               />
             </div>
@@ -203,7 +207,7 @@ const JobPostForm = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Briefcase size={16} className="inline mr-1" />
-                Job Type *
+                {t('jobForm.jobType')} *
               </label>
               <select
                 name="job_type"
@@ -212,18 +216,18 @@ const JobPostForm = () => {
                 required
                 className="input-field"
               >
-                <option value="Full-time">Full-time</option>
-                <option value="Part-time">Part-time</option>
-                <option value="Contract">Contract</option>
-                <option value="Temporary">Temporary</option>
-                <option value="Seasonal">Seasonal</option>
+                <option value="Full-time">{t('jobForm.fullTime')}</option>
+                <option value="Part-time">{t('jobForm.partTime')}</option>
+                <option value="Contract">{t('jobForm.contract')}</option>
+                <option value="Temporary">{t('jobForm.temporary')}</option>
+                <option value="Seasonal">{t('jobForm.seasonal')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Clock size={16} className="inline mr-1" />
-                Schedule *
+                {t('jobForm.schedule')} *
               </label>
               <input
                 type="text"
@@ -231,7 +235,7 @@ const JobPostForm = () => {
                 value={formData.schedule}
                 onChange={handleChange}
                 required
-                placeholder="e.g., Monday-Friday, 8am-5pm"
+                placeholder={t('jobForm.schedulePlaceholder')}
                 className="input-field"
               />
             </div>
@@ -240,7 +244,7 @@ const JobPostForm = () => {
           {/* Requirements */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Requirements * <span className="text-sm text-gray-500">(one per line)</span>
+              {t('jobForm.requirements')} * <span className="text-sm text-gray-500">{t('jobForm.requirementsHelper')}</span>
             </label>
             <textarea
               name="requirements"
@@ -248,7 +252,7 @@ const JobPostForm = () => {
               onChange={handleChange}
               required
               rows={5}
-              placeholder="Forklift certification&#10;2+ years warehouse experience&#10;Ability to lift 50 lbs"
+              placeholder={t('jobForm.requirementsPlaceholder')}
               className="input-field"
             />
           </div>
@@ -256,7 +260,7 @@ const JobPostForm = () => {
           {/* Language */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Preferred Language for Outreach
+              {t('jobForm.language')}
             </label>
             <select
               name="language"
@@ -264,8 +268,8 @@ const JobPostForm = () => {
               onChange={handleChange}
               className="input-field"
             >
-              <option value="en">English</option>
-              <option value="es">Español (Spanish)</option>
+              <option value="en">{t('jobForm.english')}</option>
+              <option value="es">{t('jobForm.spanish')}</option>
             </select>
           </div>
 
@@ -278,8 +282,8 @@ const JobPostForm = () => {
               className="flex-1"
             >
               {loading 
-                ? (isEditing ? 'Updating...' : 'Posting...') 
-                : (isEditing ? 'Update Job' : 'Post Job & Start Outreach')
+                ? (isEditing ? t('jobForm.updating') : t('jobForm.posting')) 
+                : (isEditing ? t('jobForm.updateJob') : t('jobForm.postJob'))
               }
             </Button>
             <Button 
@@ -287,7 +291,7 @@ const JobPostForm = () => {
               variant="secondary"
               onClick={() => navigate('/dashboard')}
             >
-              Cancel
+              {t('jobForm.cancel')}
             </Button>
           </div>
         </form>

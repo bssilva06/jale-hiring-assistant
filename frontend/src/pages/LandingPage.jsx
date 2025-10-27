@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Button from '../components/shared/Button';
 import { Briefcase, Users, ArrowRight } from 'lucide-react';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-light to-accent/30">
@@ -23,10 +25,10 @@ const LandingPage = () => {
             </h1>
           </div>
           <p className="text-xl md:text-2xl text-gray-700 font-medium max-w-3xl mx-auto">
-            AI-Powered Hiring Assistant
+            {t('landing.title')}
           </p>
           <p className="text-lg text-gray-600 mt-2">
-            Connect talented workers with great opportunities
+            {t('landing.subtitle')}
           </p>
         </div>
 
@@ -42,27 +44,27 @@ const LandingPage = () => {
                 <Briefcase size={48} className="text-accent" />
                 <ArrowRight size={32} className="opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-              <h2 className="text-3xl font-bold mb-2">For Employers</h2>
-              <p className="text-blue-100 text-lg">Find qualified candidates fast</p>
+              <h2 className="text-3xl font-bold mb-2">{t('landing.forEmployers')}</h2>
+              <p className="text-blue-100 text-lg">{t('landing.employersSubtitle')}</p>
             </div>
             
             <div className="p-8">
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <span className="text-primary font-bold text-xl mr-3">✓</span>
-                  <span className="text-gray-700 text-lg">Post jobs and manage applications</span>
+                  <span className="text-gray-700 text-lg">{t('landing.employerBenefit1')}</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary font-bold text-xl mr-3">✓</span>
-                  <span className="text-gray-700 text-lg">AI-powered candidate matching</span>
+                  <span className="text-gray-700 text-lg">{t('landing.employerBenefit2')}</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary font-bold text-xl mr-3">✓</span>
-                  <span className="text-gray-700 text-lg">Schedule and conduct video interviews</span>
+                  <span className="text-gray-700 text-lg">{t('landing.employerBenefit3')}</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary font-bold text-xl mr-3">✓</span>
-                  <span className="text-gray-700 text-lg">Bilingual platform support</span>
+                  <span className="text-gray-700 text-lg">{t('landing.employerBenefit4')}</span>
                 </li>
               </ul>
               
@@ -76,7 +78,7 @@ const LandingPage = () => {
                     navigate('/dashboard');
                   }}
                 >
-                  Get Started - It's Free!
+                  {t('landing.employerCTA')}
                 </Button>
               </div>
             </div>
@@ -92,27 +94,27 @@ const LandingPage = () => {
                 <Users size={48} className="text-accent" />
                 <ArrowRight size={32} className="opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-              <h2 className="text-3xl font-bold mb-2">For Workers</h2>
-              <p className="text-blue-100 text-lg">Find great jobs fast</p>
+              <h2 className="text-3xl font-bold mb-2">{t('landing.forJobSeekers')}</h2>
+              <p className="text-blue-100 text-lg">{t('landing.workersSubtitle')}</p>
             </div>
             
             <div className="p-8">
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <span className="text-primary font-bold text-xl mr-3">✓</span>
-                  <span className="text-gray-700 text-lg">Browse available job opportunities</span>
+                  <span className="text-gray-700 text-lg">{t('landing.workerBenefit1')}</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary font-bold text-xl mr-3">✓</span>
-                  <span className="text-gray-700 text-lg">Easy application process - no resume required</span>
+                  <span className="text-gray-700 text-lg">{t('landing.workerBenefit2')}</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary font-bold text-xl mr-3">✓</span>
-                  <span className="text-gray-700 text-lg">Get matched with the right jobs</span>
+                  <span className="text-gray-700 text-lg">{t('landing.workerBenefit3')}</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary font-bold text-xl mr-3">✓</span>
-                  <span className="text-gray-700 text-lg">¡Hablamos español!</span>
+                  <span className="text-gray-700 text-lg">{t('landing.workerBenefit4')}</span>
                 </li>
               </ul>
               
@@ -126,7 +128,7 @@ const LandingPage = () => {
                     navigate('/apply');
                   }}
                 >
-                  Start Applying Today!
+                  {t('landing.workerCTA')}
                 </Button>
               </div>
             </div>
@@ -136,13 +138,13 @@ const LandingPage = () => {
         {/* Trust Section */}
         <div className="text-center mt-20 mb-12">
           <p className="text-gray-600 text-lg mb-6 font-medium">
-            Built by Latinos for everyone who values hard work and opportunity
+            {t('landing.builtBy')}
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
-            <span className="px-4 py-2 bg-white rounded-full shadow">✓ Free to use</span>
-            <span className="px-4 py-2 bg-white rounded-full shadow">✓ Fully bilingual</span>
-            <span className="px-4 py-2 bg-white rounded-full shadow">✓ AI-powered matching</span>
-            <span className="px-4 py-2 bg-white rounded-full shadow">✓ Community-driven</span>
+            <span className="px-4 py-2 bg-white rounded-full shadow">✓ {t('landing.freeToUse')}</span>
+            <span className="px-4 py-2 bg-white rounded-full shadow">✓ {t('landing.bilingual')}</span>
+            <span className="px-4 py-2 bg-white rounded-full shadow">✓ {t('landing.aiPowered')}</span>
+            <span className="px-4 py-2 bg-white rounded-full shadow">✓ {t('landing.communityDriven')}</span>
           </div>
         </div>
       </div>

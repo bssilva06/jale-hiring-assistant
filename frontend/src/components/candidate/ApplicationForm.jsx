@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { candidatesAPI } from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
 import Button from '../shared/Button';
 import { User, Mail, Phone, Award, FileText, Languages, Upload, Loader, CheckCircle } from 'lucide-react';
 
 const ApplicationForm = ({ jobId }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [parsingResume, setParsingResume] = useState(false);
   const [attachedResume, setAttachedResume] = useState(null); // Store resume file
@@ -57,13 +61,13 @@ const ApplicationForm = ({ jobId }) => {
     // Check file type
     const validTypes = ['application/pdf', 'text/plain'];
     if (!validTypes.includes(file.type)) {
-      alert('Please upload a PDF or TXT file. DOC/DOCX support coming soon!');
+      toast.warning('Please upload a PDF or TXT file. DOC/DOCX support coming soon!');
       return;
     }
 
     // Check file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB');
+      toast.error('File size must be less than 5MB');
       return;
     }
 
@@ -103,10 +107,10 @@ const ApplicationForm = ({ jobId }) => {
         education: parsedData.education || prev.education,
       }));
 
-      alert('✅ Resume parsed successfully! Resume will be attached to your application.');
+      toast.success('Resume parsed successfully! Resume will be attached to your application.');
     } catch (error) {
       console.error('Error parsing resume:', error);
-      alert('❌ ' + error.message + '\n\nPlease fill out the form manually.');
+      toast.error(error.message || 'Failed to parse resume. Please fill out the form manually.');
       setAttachedResume(null); // Clear on error
     } finally {
       setParsingResume(false);
@@ -164,11 +168,11 @@ const ApplicationForm = ({ jobId }) => {
 
       // Handle specific error cases
       if (error.response?.status === 409) {
-        alert('⚠️ You have already applied for this job.\n\nYou can only submit one application per job position.');
+        toast.warning('You have already applied for this job. You can only submit one application per job position.');
       } else if (error.response?.data?.error) {
-        alert('Error: ' + error.response.data.error);
+        toast.error(error.response.data.error);
       } else {
-        alert('Failed to submit application. Please try again.');
+        toast.error('Failed to submit application. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -181,8 +185,8 @@ const ApplicationForm = ({ jobId }) => {
         <div className="flex items-center space-x-3 mb-6">
           <FileText className="text-primary" size={32} />
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Apply for Position</h2>
-            <p className="text-gray-600">Fill out the form below to submit your application</p>
+            <h2 className="text-2xl font-bold text-gray-900">{t('application.applyForPosition')}</h2>
+            <p className="text-gray-600">{t('application.fillOutForm')}</p>
           </div>
         </div>
 
@@ -190,13 +194,13 @@ const ApplicationForm = ({ jobId }) => {
           {/* Personal Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              Personal Information
+              {t('application.personalInfo')}
             </h3>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <User size={16} className="inline mr-1" />
-                Full Name *
+                {t('application.fullName')} *
               </label>
               <input
                 type="text"
@@ -204,7 +208,7 @@ const ApplicationForm = ({ jobId }) => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                placeholder="John Doe"
+                placeholder={t('application.namePlaceholder')}
                 className="input-field"
               />
             </div>
@@ -221,7 +225,7 @@ const ApplicationForm = ({ jobId }) => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  placeholder="john@example.com"
+                  placeholder={t('application.emailPlaceholder')}
                   className="input-field"
                 />
               </div>
@@ -229,7 +233,7 @@ const ApplicationForm = ({ jobId }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Phone size={16} className="inline mr-1" />
-                  Phone Number *
+                  {t('application.phoneNumber')} *
                 </label>
                 <input
                   type="tel"
@@ -237,7 +241,7 @@ const ApplicationForm = ({ jobId }) => {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  placeholder="+1 (555) 123-4567"
+                  placeholder={t('application.phonePlaceholder')}
                   className="input-field"
                 />
               </div>
@@ -246,7 +250,7 @@ const ApplicationForm = ({ jobId }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Languages size={16} className="inline mr-1" />
-                Preferred Language
+                {t('application.preferredLanguage')}
               </label>
               <select
                 name="language_preference"
@@ -254,8 +258,8 @@ const ApplicationForm = ({ jobId }) => {
                 onChange={handleChange}
                 className="input-field"
               >
-                <option value="en">English</option>
-                <option value="es">Español (Spanish)</option>
+                <option value="en">{t('jobForm.english')}</option>
+                <option value="es">{t('jobForm.spanish')}</option>
               </select>
             </div>
           </div>
@@ -263,12 +267,12 @@ const ApplicationForm = ({ jobId }) => {
           {/* Experience */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              Experience & Skills
+              {t('application.experienceSkills')}
             </h3>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Years of Experience *
+                {t('application.yearsOfExperience')} *
               </label>
               <input
                 type="number"
@@ -277,14 +281,14 @@ const ApplicationForm = ({ jobId }) => {
                 onChange={handleChange}
                 required
                 min="0"
-                placeholder="3"
+                placeholder={t('application.yearsPlaceholder')}
                 className="input-field"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Skills * <span className="text-sm text-gray-500">(one per line)</span>
+                {t('application.skills')} * <span className="text-sm text-gray-500">{t('application.skillsHelper')}</span>
               </label>
               <textarea
                 name="skills"
@@ -292,7 +296,7 @@ const ApplicationForm = ({ jobId }) => {
                 onChange={handleChange}
                 required
                 rows={4}
-                placeholder="Forklift operation&#10;Inventory management&#10;Warehouse safety&#10;Team leadership"
+                placeholder={t('application.skillsPlaceholder')}
                 className="input-field"
               />
             </div>
@@ -300,28 +304,28 @@ const ApplicationForm = ({ jobId }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Award size={16} className="inline mr-1" />
-                Certifications <span className="text-sm text-gray-500">(one per line, if any)</span>
+                {t('application.certifications')} <span className="text-sm text-gray-500">{t('application.certificationsHelper')}</span>
               </label>
               <textarea
                 name="certifications"
                 value={formData.certifications}
                 onChange={handleChange}
                 rows={3}
-                placeholder="Forklift Certified&#10;OSHA Safety Training&#10;First Aid & CPR"
+                placeholder={t('application.certificationsPlaceholder')}
                 className="input-field"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Resume URL <span className="text-sm text-gray-500">(optional)</span>
+                {t('application.resumeUrl')} <span className="text-sm text-gray-500">{t('application.resumeUrlHelper')}</span>
               </label>
               <input
                 type="url"
                 name="resume_url"
                 value={formData.resume_url}
                 onChange={handleChange}
-                placeholder="https://drive.google.com/your-resume"
+                placeholder={t('application.resumeUrlPlaceholder')}
                 className="input-field"
               />
             </div>
@@ -330,7 +334,7 @@ const ApplicationForm = ({ jobId }) => {
           {/* Resume Upload */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-              Resume
+              {t('application.resume')}
             </h3>
 
             {attachedResume ? (
@@ -339,7 +343,7 @@ const ApplicationForm = ({ jobId }) => {
                 <div className="text-center">
                   <CheckCircle className="mx-auto text-green-600 mb-3" size={48} />
                   <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                    Resume Attached
+                    {t('application.resumeAttached')}
                   </h4>
                   <p className="text-sm text-gray-700 mb-4">
                     <strong>{attachedResume.name}</strong> ({(attachedResume.size / 1024).toFixed(1)} KB)
@@ -356,7 +360,7 @@ const ApplicationForm = ({ jobId }) => {
                       />
                       <div className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors inline-flex items-center space-x-2">
                         <Upload size={18} />
-                        <span>Replace</span>
+                        <span>{t('application.replace')}</span>
                       </div>
                     </label>
                     <button
@@ -364,12 +368,12 @@ const ApplicationForm = ({ jobId }) => {
                       onClick={() => setAttachedResume(null)}
                       className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
                     >
-                      Remove
+                      {t('application.remove')}
                     </button>
                   </div>
 
                   <p className="text-xs text-green-700 mt-3">
-                    ✓ This resume will be submitted with your application
+                    ✓ {t('application.resumeWillBeSubmitted')}
                   </p>
                 </div>
               </div>
@@ -379,10 +383,10 @@ const ApplicationForm = ({ jobId }) => {
                 <div className="text-center">
                   <Upload className="mx-auto text-blue-500 mb-3" size={48} />
                   <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                    Upload Your Resume
+                    {t('application.uploadResume')}
                   </h4>
                   <p className="text-sm text-gray-600 mb-4">
-                    Our AI will automatically extract your information and fill out the form for you!
+                    {t('application.resumeDescription')}
                   </p>
 
                   <div className="flex items-center justify-center">
@@ -398,12 +402,12 @@ const ApplicationForm = ({ jobId }) => {
                         {parsingResume ? (
                           <>
                             <Loader className="animate-spin" size={20} />
-                            <span>Parsing Resume...</span>
+                            <span>{t('application.parsingResume')}</span>
                           </>
                         ) : (
                           <>
                             <Upload size={20} />
-                            <span>Choose File</span>
+                            <span>{t('application.chooseFile')}</span>
                           </>
                         )}
                       </div>
@@ -411,7 +415,7 @@ const ApplicationForm = ({ jobId }) => {
                   </div>
 
                   <p className="text-xs text-gray-500 mt-3">
-                    Supported formats: PDF, TXT (Max 5MB)
+                    {t('application.supportedFormats')}
                   </p>
                 </div>
               </div>
@@ -419,7 +423,7 @@ const ApplicationForm = ({ jobId }) => {
 
             {!attachedResume && (
               <div className="text-center text-sm text-gray-500">
-                <span>Or fill out the form manually below</span>
+                <span>{t('application.fillManually')}</span>
               </div>
             )}
           </div>
@@ -427,7 +431,7 @@ const ApplicationForm = ({ jobId }) => {
           {/* AI Chatbot Info */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-800">
-              <strong>💬 Have questions?</strong> Click the chat button in the bottom-right corner to ask our AI assistant about pay, schedule, location, or requirements!
+              <strong>💬 {t('application.chatbotInfo')}</strong>
             </p>
           </div>
 
@@ -439,14 +443,14 @@ const ApplicationForm = ({ jobId }) => {
               disabled={loading}
               className="flex-1"
             >
-              {loading ? 'Submitting...' : 'Submit Application'}
+              {loading ? t('application.submitting') : t('application.submitApplication')}
             </Button>
             <Button 
               type="button" 
               variant="secondary"
               onClick={() => navigate(-1)}
             >
-              Cancel
+              {t('jobForm.cancel')}
             </Button>
           </div>
         </form>

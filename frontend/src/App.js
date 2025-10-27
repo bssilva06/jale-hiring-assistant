@@ -5,6 +5,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import './i18n'; // Initialize i18n
+import { ToastProvider } from "./contexts/ToastContext";
 import Navbar from "./components/layout/Navbar";
 import Sidebar from "./components/layout/Sidebar";
 
@@ -27,7 +29,8 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <Router>
+    <ToastProvider>
+      <Router>
       <Routes>
         {/* Landing Page - No Navbar/Sidebar */}
         <Route path="/" element={<LandingPage />} />
@@ -150,6 +153,7 @@ function App() {
         />
       </Routes>
     </Router>
+    </ToastProvider>
   );
 }
 

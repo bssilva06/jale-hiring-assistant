@@ -220,8 +220,43 @@ const parseResume = async (resumeText) => {
   }
 };
 
+const translateText = async (text, targetLanguage, sourceLanguage = 'en') => {
+  const languageNames = {
+    en: 'English',
+    es: 'Spanish'
+  };
+
+  const targetLang = languageNames[targetLanguage] || 'English';
+  const sourceLang = languageNames[sourceLanguage] || 'English';
+
+  try {
+    const message = await anthropic.messages.create({
+      model: "claude-3-haiku-20240307",
+      max_tokens: 2048,
+      temperature: 0.3,
+      messages: [
+        {
+          role: "user",
+          content: `Translate the following text from ${sourceLang} to ${targetLang}. 
+          
+IMPORTANT: Only return the translated text, nothing else. No explanations, no notes.
+
+Text to translate:
+${text}`
+        }
+      ]
+    });
+
+    return message.content[0].text.trim();
+  } catch (error) {
+    console.error('Claude translation error:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   getMatchScore,
   getChatResponse,
   parseResume,
+  translateText,
 };

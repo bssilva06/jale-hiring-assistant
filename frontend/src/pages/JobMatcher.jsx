@@ -1,17 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { jobsAPI } from '../services/api';
+import { translateJobs } from '../utils/translator';
+import { useToast } from '../contexts/ToastContext';
 import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
 import { Briefcase, MapPin, DollarSign, Clock, Award, Search, TrendingUp, Upload, Loader } from 'lucide-react';
 
 const JobMatcher = () => {
   const navigate = useNavigate();
+  const toast = useToast();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [parsingResume, setParsingResume] = useState(false);
+  const [translating, setTranslating] = useState(false);
   const [matchedJobs, setMatchedJobs] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [uploadedResume, setUploadedResume] = useState(null); // Store the actual resume file
+
+  // Helper function to extract keywords from a skill string
+  const extractKeywords = (text) => {
+    if (!text) return [];
+    return text.toLowerCase()
+      .replace(/[()]/g, ' ') // Remove parentheses
+      .split(/[\s,/-]+/) // Split on spaces, commas, slashes, hyphens
+      .map(word => word.trim())
+      .filter(word => word.length > 2); // Filter out very short words
+  };
+
+  // Helper function to check if skills match using keyword comparison
+  const skillsMatch = (candidateSkill, jobText) => {
+    const candidateKeywords = extractKeywords(candidateSkill);
+    const jobTextLower = jobText.toLowerCase();
+    
+    // Check if ANY of the candidate's keywords appear in the job text
+    return candidateKeywords.some(keyword => jobTextLower.includes(keyword));
+  };
+
+  // Helper function to check if requirements are met by candidate
+  const checkRequirementMatch = (requirement, candidateSkills, candidateCerts) => {
+    const reqLower = requirement.toLowerCase();
+    const allCandidateText = [
+      ...candidateSkills,
+      ...candidateCerts
+    ].join(' ').toLowerCase();
+    
+    // Extract key terms from requirement
+    const reqKeywords = extractKeywords(requirement);
+    
+    // Check if candidate has matching keywords
+    return reqKeywords.some(keyword => allCandidateText.includes(keyword));
+  };
+
   const [formData, setFormData] = useState({
     // Job Preferences
     jobType: '',
@@ -32,6 +73,20 @@ const JobMatcher = () => {
     language_preference: 'en',
   });
 
+  // Translate matched jobs when language changes
+  useEffect(() => {
+    const translateMatchedJobs = async () => {
+      if (matchedJobs.length > 0 && i18n.language) {
+        setTranslating(true);
+        const translated = await translateJobs(matchedJobs, i18n.language);
+        setMatchedJobs(translated);
+        setTranslating(false);
+      }
+    };
+    
+    translateMatchedJobs();
+  }, [i18n.language]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -42,12 +97,12 @@ const JobMatcher = () => {
     if (!file) return;
 
     if (!['application/pdf', 'text/plain'].includes(file.type)) {
-      alert('Please upload a PDF or TXT file');
+      toast.warning('Please upload a PDF or TXT file');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB');
+      toast.error('File size must be less than 5MB');
       return;
     }
 
@@ -84,10 +139,10 @@ const JobMatcher = () => {
         education: parsedData.education || prev.education,
       }));
 
-      alert('✅ Resume parsed successfully! Resume will be attached to your application.');
+      toast.success('Resume parsed successfully! Resume will be attached to your application.');
     } catch (error) {
       console.error('Error parsing resume:', error);
-      alert('❌ ' + error.message);
+      toast.error(error.message || 'Failed to parse resume');
       setUploadedResume(null); // Clear on error
     } finally {
       setParsingResume(false);
@@ -184,20 +239,73 @@ const JobMatcher = () => {
           }
         }
 
-        // Skills match (30 points)
+        // Skills match (30 points) - IMPROVED MATCHING
         if (candidateSkills.length > 0) {
-          // Extract skills from job description and requirements text
-          const jobText = `${job.description || ''} ${job.requirements || ''}`.toLowerCase();
+          // Get job requirements as array
+          const jobRequirements = Array.isArray(job.requirements) 
+            ? job.requirements 
+            : (job.requirements || '').split('\n').filter(r => r.trim());
           
+          // Combine job description and requirements for text search
+          const jobText = `${job.description || ''} ${jobRequirements.join(' ')}`.toLowerCase();
+          
+          // Count matching skills using the improved keyword matching
           const matchingSkills = candidateSkills.filter(skill => 
-            jobText.includes(skill.toLowerCase())
+            skillsMatch(skill, jobText)
           );
           
-          if (matchingSkills.length > 0) {
-            // Give more points for more matching skills
-            const skillPoints = Math.min(matchingSkills.length * 5, 30); // Up to 30 points for skills
+          // Also check requirements explicitly
+          const candidateCerts = formData.certifications
+            .split('\n')
+            .map(s => s.trim())
+            .filter(s => s);
+          
+          const matchedRequirements = jobRequirements.filter(req => 
+            checkRequirementMatch(req, candidateSkills, candidateCerts)
+          );
+          
+          // Calculate skill points based on matches
+          const totalMatches = new Set([...matchingSkills, ...matchedRequirements.map(r => r.substring(0, 20))]).size;
+          
+          if (totalMatches > 0) {
+            // Give more points for more matching skills (5 points each, up to 30)
+            const skillPoints = Math.min(totalMatches * 5, 30);
             score += skillPoints;
-            reasons.push(`✓ Skills: ${matchingSkills.length} match (${matchingSkills.join(', ')})`);
+            
+            // Show both matched skills and requirements
+            const matchDetails = [];
+            if (matchingSkills.length > 0) {
+              matchDetails.push(`${matchingSkills.length} skills (${matchingSkills.slice(0, 3).join(', ')}${matchingSkills.length > 3 ? '...' : ''})`);
+            }
+            if (matchedRequirements.length > 0) {
+              matchDetails.push(`${matchedRequirements.length} requirements met`);
+            }
+            
+            reasons.push(`✓ Skills & Requirements: ${matchDetails.join(', ')}`);
+          }
+        }
+
+        // Experience bonus (up to 10 additional points)
+        if (formData.experience_years) {
+          const candidateYears = parseInt(formData.experience_years);
+          const jobText = `${job.description || ''} ${job.requirements || ''}`.toLowerCase();
+          
+          // Try to extract years requirement from job posting
+          const yearsMatch = jobText.match(/(\d+)\+?\s*years?/i);
+          
+          if (yearsMatch) {
+            const requiredYears = parseInt(yearsMatch[1]);
+            if (candidateYears >= requiredYears) {
+              score += 10;
+              reasons.push(`✓ Experience: ${candidateYears} years (meets ${requiredYears}+ requirement)`);
+            } else if (candidateYears >= requiredYears - 1) {
+              score += 5;
+              reasons.push(`✓ Experience: ${candidateYears} years (close to ${requiredYears}+ requirement)`);
+            }
+          } else if (candidateYears >= 2) {
+            // General experience bonus if no specific requirement found
+            score += 5;
+            reasons.push(`✓ Experience: ${candidateYears} years of experience`);
           }
         }
 
@@ -213,11 +321,14 @@ const JobMatcher = () => {
         .filter(job => job.matchScore > 0)
         .sort((a, b) => b.matchScore - a.matchScore);
 
-      setMatchedJobs(sortedMatches);
+      // Translate the matched jobs
+      const translatedMatches = await translateJobs(sortedMatches, i18n.language);
+      
+      setMatchedJobs(translatedMatches);
       setShowResults(true);
     } catch (error) {
       console.error('Error matching jobs:', error);
-      alert('Failed to find matching jobs. Please try again.');
+      toast.error('Failed to find matching jobs. Please try again.');
     } finally {
       setLoading(false);
     }

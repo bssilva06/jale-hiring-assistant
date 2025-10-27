@@ -70,7 +70,7 @@ const InterviewsPage = () => {
         {todayCount > 0 && (
           <div className="bg-orange-100 border border-orange-300 rounded-lg px-4 py-2">
             <p className="text-orange-800 font-semibold">
-              🔔 {todayCount} interview{todayCount > 1 ? 's' : ''} scheduled today
+              {todayCount} interview{todayCount > 1 ? 's' : ''} scheduled today
             </p>
           </div>
         )}

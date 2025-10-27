@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { jobsAPI, interviewsAPI, applicationsAPI } from '../services/api';
 import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
 import CandidateList from '../components/hiring/CandidateList';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Briefcase, 
-  Users, 
-  Calendar, 
-  TrendingUp, 
+import {
+  Briefcase,
+  Users,
+  Calendar,
+  TrendingUp,
   CheckCircle,
   Clock,
-  UserCheck 
+  UserCheck
 } from 'lucide-react';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalJobs: 0,
@@ -115,15 +117,15 @@ const Dashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Hiring Dashboard</h1>
-          <p className="text-gray-600 mt-1">Manage your recruitment process with AI assistance</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.title')}</h1>
+          <p className="text-gray-600 mt-1">{t('dashboard.subtitle')}</p>
         </div>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={() => navigate('/jobs/new')}
         >
           <Briefcase size={20} className="inline mr-2" />
-          Post New Job
+          {t('dashboard.postNewJob')}
         </Button>
       </div>
 
@@ -131,28 +133,28 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           icon={Briefcase}
-          label="Active Jobs"
+          label={t('dashboard.activeJobs')}
           value={stats.totalJobs}
           color="bg-blue-500"
           onClick={() => navigate('/jobs')}
         />
         <StatCard
           icon={Users}
-          label="Total Applications"
+          label={t('dashboard.totalApplications')}
           value={stats.totalApplications}
           color="bg-green-500"
           onClick={() => navigate('/candidates')}
         />
         <StatCard
           icon={Calendar}
-          label="Interviews Scheduled"
+          label={t('dashboard.interviewsScheduled')}
           value={stats.interviewsScheduled}
           color="bg-purple-500"
           onClick={() => navigate('/interviews')}
         />
         <StatCard
           icon={UserCheck}
-          label="Hired"
+          label={t('dashboard.hired')}
           value={stats.hired}
           color="bg-emerald-500"
         />
@@ -163,13 +165,13 @@ const Dashboard = () => {
         <div className="lg:col-span-2">
           <Card>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Recent Applications</h2>
-              <Button 
-                variant="outline" 
+              <h2 className="text-xl font-bold text-gray-900">{t('dashboard.recentApplications')}</h2>
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => navigate('/candidates')}
               >
-                View All
+                {t('dashboard.viewAll')}
               </Button>
             </div>
             <CandidateList />
@@ -179,18 +181,18 @@ const Dashboard = () => {
         <div className="space-y-6">
           {/* Active Jobs */}
           <Card>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Active Jobs</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('dashboard.activeJobs')}</h2>
             {recentJobs.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Briefcase size={48} className="mx-auto mb-3 opacity-50" />
-                <p>No active jobs</p>
-                <Button 
-                  variant="primary" 
+                <p>{t('dashboard.noActiveJobs')}</p>
+                <Button
+                  variant="primary"
                   size="sm"
                   className="mt-4"
                   onClick={() => navigate('/jobs/new')}
                 >
-                  Post Your First Job
+                  {t('dashboard.postFirstJob')}
                 </Button>
               </div>
             ) : (
@@ -219,31 +221,31 @@ const Dashboard = () => {
 
           {/* Quick Actions */}
           <Card>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('dashboard.quickActions')}</h2>
             <div className="space-y-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full justify-start"
                 onClick={() => navigate('/jobs/new')}
               >
                 <Briefcase size={18} className="mr-2" />
-                Post New Job
+                {t('dashboard.postNewJob')}
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full justify-start"
                 onClick={() => navigate('/candidates')}
               >
                 <Users size={18} className="mr-2" />
-                View Candidates
+                {t('dashboard.viewCandidates')}
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full justify-start"
                 onClick={() => navigate('/interviews')}
               >
                 <Calendar size={18} className="mr-2" />
-                Manage Interviews
+                {t('dashboard.manageInterviews')}
               </Button>
             </div>
           </Card>

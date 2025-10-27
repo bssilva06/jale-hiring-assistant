@@ -9,7 +9,7 @@ const ChatBot = ({ jobId, applicationId }) => {
     {
       id: 1,
       sender: 'ai',
-      content: 'Hi! I\'m here to answer your questions about this job. Feel free to ask in English or Spanish! 🤖',
+      content: 'Hi! I\'m here to answer your questions about this job. Feel free to ask in English or Spanish!',
       timestamp: new Date(),
     }
   ]);
